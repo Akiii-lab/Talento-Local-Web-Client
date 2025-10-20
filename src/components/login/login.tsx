@@ -1,10 +1,91 @@
 "use client";
 
 import Image from 'next/image';
-export const LoginComponent = () => {
-  return (
-    <div className="flex flex-col">
+import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
+import { set, useForm } from 'react-hook-form';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/app/store/userStore';
 
+export const LoginComponent = () => {
+  const router = useRouter();
+  const form = useForm();
+  const { setUser } = useUserStore();
+
+  const handleLogin = async() => {
+    setUser(true);
+    router.push("/home");
+  }
+
+  return (
+    <div className="flex flex-col border shadow-2xl rounded-lg p-8 gap-4 w-sm">
+      <div className='items-center justify-center flex'>
+        <Image
+          src="/talentologo.png"
+          alt="Logo"
+          width={150}
+          height={150}
+          className='hover:cursor-pointer'
+          onClick={() => router.push("/")}
+        />
+      </div>
+      <Form {...form}>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="Ingresa tu email" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Contraseña</FormLabel>
+              <FormControl>
+                <Input placeholder="Ingresa tu contraseña" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </Form>
+      <div className='text-sm text-right w-full text-muted-foreground hover:cursor-pointer'>
+        <span className='font-light underline'>
+          olvidaste tu contraseña?
+        </span>
+      </div>
+      <Button
+        onClick={handleLogin}
+      >
+        Iniciar Sesión
+      </Button>
+      <div className='text-sm flex items-center justify-start gap-1 hover:cursor-pointer'>
+        <span>
+          no tienes cuenta?
+        </span>
+        <span className='font-medium text-(--per-primary) underline hover:text-(--per-secondary)'
+        onClick={() => router.push('/signup')}>
+          Registrate
+        </span>
+      </div>
+      <Button
+        variant="outline"
+        className='hover:cursor-pointer'
+      >
+        <GoogleSVG />
+      </Button>
+      <Button
+        className='hover:cursor-pointer text-white bg-black hover:text-white hover:bg-black'
+      >
+        <AppleSVG />
+      </Button>
     </div>
   );
 }
@@ -15,7 +96,7 @@ const AppleSVG = () => {
       <svg stroke="currentColor" fill="currentColor" strokeWidth={0} className="text-xl mb-0.5" viewBox="0 0 1024 1024" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
         <path d="M747.4 535.7c-.4-68.2 30.5-119.6 92.9-157.5-34.9-50-87.7-77.5-157.3-82.8-65.9-5.2-138 38.4-164.4 38.4-27.9 0-91.7-36.6-141.9-36.6C273.1 298.8 163 379.8 163 544.6c0 48.7 8.9 99 26.7 150.8 23.8 68.2 109.6 235.3 199.1 232.6 46.8-1.1 79.9-33.2 140.8-33.2 59.1 0 89.7 33.2 141.9 33.2 90.3-1.3 167.9-153.2 190.5-221.6-121.1-57.1-114.6-167.2-114.6-170.7zm-105.1-305c50.7-60.2 46.1-115 44.6-134.7-44.8 2.6-96.6 30.5-126.1 64.8-32.5 36.8-51.6 82.3-47.5 133.6 48.4 3.7 92.6-21.2 129-63.7z" />
       </svg>
-      <span>Log in with Apple</span>
+      <span>Ingresa con Apple</span>
     </>
   )
 }
@@ -33,7 +114,7 @@ const GoogleSVG = () => {
         <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571
     c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
       </svg>
-      <span>Log in with Google</span>
+      <span>Ingresa con Google</span>
     </>
   )
 }

@@ -5,15 +5,13 @@ import { Button } from "./ui/button";
 import { usePathname, useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { BellIcon } from "lucide-react";
+import { useUserStore } from "@/app/store/userStore";
 
 export default function Header() {
 
     const router = useRouter();
     const actualPath = usePathname();
-
-    const user = false; //use zustand for get user in store
-
-    console.log("Ruta actual:", actualPath);
+    const {user} = useUserStore();
 
     return (
         <div className={`border-b flex flex-row items-center justify-between`} >
@@ -24,21 +22,21 @@ export default function Header() {
             <div className="flex flex-row justify-around">
                 <Button
                     variant="link"
-                    className={`hover:cursor-pointer decoration-(--per-primary) text-lg ${actualPath === '/home' ? 'underline underline-offset-8' : ''}`}
+                    className={`hover:cursor-pointer decoration-(--per-primary) ${actualPath === '/home' ? 'underline underline-offset-8' : ''}`}
                     onClick={() => router.push("/")}
                 >
                     Buscar Empleo
                 </Button>
                 <Button
                     variant="link"
-                    className={`hover:cursor-pointer decoration-(--per-primary) text-lg ${actualPath === '/ofrecer-empleo' ? 'underline underline-offset-8' : ''}`}
+                    className={`hover:cursor-pointer decoration-(--per-primary) ${actualPath === '/ofrecer-empleo' ? 'underline underline-offset-8' : ''}`}
                     //onClick={() => router.push("/ofrecer-empleo")}
                 >
                     Ofrecer Empleo
                 </Button>
                 <Button
                     variant="link"
-                    className={`hover:cursor-pointer decoration-(--per-primary) text-lg ${actualPath === '/acerca-de' ? 'underline underline-offset-8' : ''}`}
+                    className={`hover:cursor-pointer decoration-(--per-primary) ${actualPath === '/acerca-de' ? 'underline underline-offset-8' : ''}`}
                     //onClick={() => router.push("/acerca-de")}
                 >
                     Acerca de
