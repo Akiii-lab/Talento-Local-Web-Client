@@ -46,12 +46,9 @@ export default function Header() {
                 {user ? (
                     <div className="flex flex-row border rounded-4xl p-3 items-center gap-2">
                         <div className="flex flex-row items-center gap-2">
-                            <BellIcon className="hover:cursor-pointer text-muted-foreground" />
-                            <span className="font-light">
-                                Notificaciones |
-                            </span>
+                            <BellIcon size={18} className="hover:cursor-pointer text-muted-foreground" />
                         </div>
-                        <div className="flex flex-row items-center gap-2">
+                        <div className="flex flex-row items-center gap-2 text-sm">
                             <span className="font-semibold">
                                 Cristian Garcia
                             </span>
