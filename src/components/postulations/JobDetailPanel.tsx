@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { JobDetailPanelProps } from "@/types/postulations/JobDetailPanel.types";
 import {
   MapPinIcon,
   ClockIcon,
@@ -10,24 +11,6 @@ import {
   EyeIcon,
   MoreVerticalIcon,
 } from "lucide-react";
-
-interface JobDetailPanelProps {
-  job: {
-    id: number;
-    title: string;
-    subtitle?: string;
-    company: string;
-    location: string;
-    type: string;
-    schedule: string;
-    modality: string;
-    salary?: string;
-    postedTime: string;
-    featured: boolean;
-    urgent: boolean;
-    rating: number | null;
-  };
-}
 
 export function JobDetailPanel({ job }: JobDetailPanelProps) {
   return (
@@ -84,6 +67,12 @@ export function JobDetailPanel({ job }: JobDetailPanelProps) {
           <MapPinIcon size={18} className="text-gray-500" />
           <span>{job.modality}</span>
         </div>
+        {job.salary && (
+          <div className="flex items-center gap-2 text-sm text-green-700">
+            <span className="font-semibold">{`$ ${job.salary.toLocaleString('es-CO')}`}</span>
+            <span className="text-xs text-gray-500">{job.payType ?? 'Mensual'}</span>
+          </div>
+        )}
       </div>
 
       {/* Descripción */}

@@ -1,34 +1,14 @@
+import { JobCardProps } from "@/types/postulations/JobCard.types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MapPinIcon, MoreVerticalIcon } from "lucide-react";
 
-interface JobCardProps {
-  job: {
-    id: number;
-    title: string;
-    subtitle?: string;
-    company: string;
-    location: string;
-    type: string;
-    schedule: string;
-    modality: string;
-    salary?: string;
-    postedTime: string;
-    featured: boolean;
-    urgent: boolean;
-    rating: number | null;
-  };
-  onClick?: () => void;
-}
-
-export function JobCard({ job, onClick }: JobCardProps) {
+export function JobCard({ job, onClick, className }: JobCardProps) {
   return (
     <Card
       onClick={onClick}
-      className={`p-4 hover:shadow-lg transition-shadow cursor-pointer ${
-        job.featured ? "border-blue-500 border-2" : ""
-      }`}
+      className={`p-4 hover:shadow-lg transition-shadow cursor-pointer ${className ?? ""}`}
     >
       {/* Header con badges */}
       <div className="flex items-start justify-between mb-2">
@@ -75,7 +55,7 @@ export function JobCard({ job, onClick }: JobCardProps) {
       {/* Salario */}
       {job.salary && (
         <p className="text-sm font-semibold text-green-700 mb-3">
-          {job.salary}
+          {`$ ${job.salary.toLocaleString('es-CO')} (${job.payType ?? 'Mensual'})`}
         </p>
       )}
 

@@ -16,7 +16,8 @@ const mockPostulations = [
         type: "Contrato de Obra o labor",
         schedule: "Tiempo Completo",
         modality: "Presencial",
-        salary: "$ 1.423.500,00 (Mensual)",
+        salary: 1423500,
+        payType: 'Mensual' as const,
         postedTime: "Hace 43 minutos",
         featured: true,
         urgent: false,
@@ -31,7 +32,8 @@ const mockPostulations = [
         type: "Contrato Fijo",
         schedule: "Tiempo Completo",
         modality: "Presencial",
-        salary: "$ 2.740.000,00 (Mensual)",
+        salary: 2740000,
+        payType: 'Quincenal' as const,
         postedTime: "Hace 1 hora",
         featured: false,
         urgent: true,
@@ -46,7 +48,8 @@ const mockPostulations = [
         type: "Contrato de Aprendizaje",
         schedule: "Tiempo Completo",
         modality: "Presencial",
-        salary: "$ 1.423.500,00 (Mensual)",
+        salary: 1423500,
+        payType: 'Semanal' as const,
         postedTime: "Hace 4 horas",
         featured: false,
         urgent: false,
@@ -61,7 +64,8 @@ const mockPostulations = [
         type: "Contrato Indefinido",
         schedule: "Tiempo Completo",
         modality: "Remoto",
-        salary: "$ 4.500.000,00 (Mensual)",
+        salary: 4500000,
+        payType: 'Mensual' as const,
         postedTime: "Hace 2 días",
         featured: true,
         urgent: false,
@@ -76,7 +80,8 @@ const mockPostulations = [
         type: "Contrato Fijo",
         schedule: "Tiempo Completo",
         modality: "Presencial",
-        salary: "$ 2.200.000,00 (Mensual)",
+        salary: 2200000,
+        payType: 'Quincenal' as const,
         postedTime: "Hace 1 día",
         featured: false,
         urgent: true,
@@ -86,17 +91,37 @@ const mockPostulations = [
 
 export default function PostulationsPage() {
     const [selectedJob, setSelectedJob] = useState(mockPostulations[0]);
+    const [orderBy, setOrderBy] = useState("recientes");
+    const [payType, setPayType] = useState("");
+    const [minSalary, setMinSalary] = useState(0);
+
+    // Filtrar y ordenar postulaciones
+    const filteredPostulations = mockPostulations
+        .filter(job => (payType ? job.payType === payType : true))
+        .filter(job => job.salary >= minSalary)
+        .sort((a, b) => {
+            if (orderBy === "salario") return b.salary - a.salary;
+            if (orderBy === "empresa") return a.company.localeCompare(b.company);
+            return 0; // recientes: ya están mockeados en orden
+        });
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
                 {/* Filtros superiores */}
-                <FilterBar />
+                <FilterBar
+                    orderBy={orderBy}
+                    setOrderBy={setOrderBy}
+                    payType={payType}
+                    setPayType={setPayType}
+                    minSalary={minSalary}
+                    setMinSalary={setMinSalary}
+                />
 
                 {/* Contador de ofertas */}
                 <div className="mb-4">
                     <p className="text-sm text-gray-600">
-                        <strong>{mockPostulations.length}</strong> Ofertas de empleo en Santa Marta, Magdalena
+                        <strong>{filteredPostulations.length}</strong> Ofertas de empleo en Santa Marta, Magdalena
                     </p>
                 </div>
 
@@ -104,11 +129,12 @@ export default function PostulationsPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Lista de postulaciones */}
                     <div className="space-y-4">
-                        {mockPostulations.map((job) => (
+                        {filteredPostulations.map((job) => (
                             <JobCard
                                 key={job.id}
                                 job={job}
                                 onClick={() => setSelectedJob(job)}
+                                className={selectedJob.id === job.id ? "border-blue-500 border-2" : ""}
                             />
                         ))}
                     </div>
