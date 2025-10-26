@@ -9,6 +9,6 @@ export default function PublicLayout({
         <>
             <Header />
             {children}
-        </>)
-        ;
+        </>
+    );
 }
