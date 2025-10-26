@@ -11,10 +11,11 @@ import { useUserStore } from '@/app/store/userStore';
 export const LoginComponent = () => {
   const router = useRouter();
   const form = useForm();
-  const { setUser } = useUserStore();
+  const { setUser,setUserType } = useUserStore();
 
   const handleLogin = async() => {
     setUser(true);
+    setUserType("normal");
     router.push("/home");
   }
 

@@ -2,9 +2,11 @@ import { JobCardProps } from "@/types/postulations/JobCard.types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MapPinIcon, MoreVerticalIcon } from "lucide-react";
+import { Heart, HeartIcon, MapPinIcon, MoreVerticalIcon } from "lucide-react";
+import { useState } from "react";
 
 export function JobCard({ job, onClick, className }: JobCardProps) {
+  const [favorited, setFavorited] = useState(false);
   return (
     <Card
       onClick={onClick}
@@ -19,13 +21,15 @@ export function JobCard({ job, onClick, className }: JobCardProps) {
             </Badge>
           )}
           {job.urgent && (
-            <Badge variant="destructive" className="text-xs">
+            <Badge variant="destructive" className="text-xs text-white">
               Se precisa Urgente
             </Badge>
           )}
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <MoreVerticalIcon size={16} />
+        <Button variant="ghost" size="icon" className="h-8 w-8 hover:cursor-pointer"
+          onClick={()=> setFavorited(!favorited)}
+        >
+          <Heart size={16} className={favorited ? "text-red-500" : "text-gray-400"} />
         </Button>
       </div>
 
