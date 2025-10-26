@@ -1,10 +1,14 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BriefcaseBusinessIcon, SearchIcon } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
+    const router = useRouter();
     return (
         <div className="relative w-full h-screen flex items-start justify-center">
             <div className="absolute top-0 left-0 w-full -z-10 overflow-hidden">
@@ -23,7 +27,7 @@ export default function HomePage() {
                             <BriefcaseBusinessIcon size={18} className="text-foreground" />
                             <input placeholder="Buscar empleo" className="ml-2 border-none focus:outline-none" />
                         </div>
-                        <Button className="bg-(--per-fourth)">
+                        <Button onClick={() => router.push("/postulations")} className="bg-(--per-fourth)">
                             <Label>
                                 Buscar empleo
                             </Label>
