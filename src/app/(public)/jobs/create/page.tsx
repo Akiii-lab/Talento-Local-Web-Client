@@ -14,9 +14,10 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Briefcase, MapPin, DollarSign, Clock, Users, FileText, Building2 } from "lucide-react";
+import { CreateJobFormData } from "@/types/jobs/CreateJob.types";
 
 export default function CreateJobPage() {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<CreateJobFormData>({
         title: "",
         subtitle: "",
         company: "",

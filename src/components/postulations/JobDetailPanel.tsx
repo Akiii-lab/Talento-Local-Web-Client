@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { JobDetailPanelProps } from "@/types/postulations/JobDetailPanel.types";
+import { JobDetailPanelProps } from "@/types/jobs/JobDetailPanel.types";
 import {
   MapPinIcon,
   ClockIcon,

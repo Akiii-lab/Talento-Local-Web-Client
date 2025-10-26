@@ -4,7 +4,7 @@ import { useState } from "react";
 import { JobCard } from "@/components/postulations/JobCard";
 import { JobDetailPanel } from "@/components/postulations/JobDetailPanel";
 import { FilterBar } from "@/components/postulations/FilterBar";
-import { JobCardType } from "@/types/postulations/JobCard.types";
+import { JobCardType } from "@/types/jobs/JobCard.types";
 
 // Mock data de postulaciones
 const mockPostulations: JobCardType[] = [

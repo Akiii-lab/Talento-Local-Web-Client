@@ -1,4 +1,4 @@
-import { JobCardProps } from "@/types/postulations/JobCard.types";
+import { JobCardProps } from "@/types/jobs/JobCard.types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

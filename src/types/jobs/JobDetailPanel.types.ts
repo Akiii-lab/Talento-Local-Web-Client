@@ -3,17 +3,17 @@ export interface JobDetailPanelType {
     title: string;
     subtitle?: string;
     company: string;
-    location: string;
+    location: string; // siempre sera "santa marta, magdalena"
     type: string;
-    schedule: string;
+    schedule: string; //horario
     modality: "Presencial" | "Remoto" | "Hibrido";
     salary: number;
     payType: "Mensual" | "Semanal" | "Quincenal";
     postedTime: string;
     postedDate: Date;
-    featured: boolean;
-    urgent: boolean;
-    rating: number | null;
+    featured: boolean; // se pone en true a traves de algoritmos default false
+    urgent: boolean; 
+    rating: number | null; // se obtiene del perfil de la empresa
     category: "tecnologia" | "ventas" | "admin" | "servicios";
     experience: number; // años de experiencia requeridos (0 = sin experiencia)
     jornada: "completo" | "parcial" | "flexible";
