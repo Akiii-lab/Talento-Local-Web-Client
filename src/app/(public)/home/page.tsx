@@ -54,10 +54,14 @@ export default function HomePage() {
 
                 {/* Botones de acción */}
                 <div className="flex flex-col md:flex-row gap-4 mt-10 w-full max-w-2xl justify-center items-center">
-                    <Button className="w-full md:w-auto bg-blue-500 text-white font-semibold px-8 py-3 rounded-lg shadow hover:bg-blue-600 transition">
+                    <Button className="w-full md:w-auto bg-blue-500 text-white font-semibold px-8 py-3 rounded-lg shadow hover:bg-blue-600 transition"
+                        onClick={() => router.push("/signup")}
+                    >
                         Crear cuenta gratis
                     </Button>
-                    <Button variant="outline" className="w-full md:w-auto border-blue-500 text-blue-500 font-semibold px-8 py-3 rounded-lg shadow hover:bg-blue-50 transition">
+                    <Button variant="outline" className="w-full md:w-auto border-blue-500 text-blue-500 font-semibold px-8 py-3 rounded-lg shadow hover:bg-blue-50 transition"
+                        onClick={()=> router.push("/jobs/create")}
+                    >
                         Publicar empleo
                     </Button>
                 </div>

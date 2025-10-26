@@ -1,20 +1,24 @@
 export interface JobDetailPanelType {
-  id: number;
-  title: string;
-  subtitle?: string;
-  company: string;
-  location: string;
-  type: string;
-  schedule: string;
-  modality: string;
-  salary?: number;
-  payType?: "Mensual" | "Semanal" | "Quincenal";
-  postedTime: string;
-  featured: boolean;
-  urgent: boolean;
-  rating: number | null;
+    id: number;
+    title: string;
+    subtitle?: string;
+    company: string;
+    location: string;
+    type: string;
+    schedule: string;
+    modality: "Presencial" | "Remoto" | "Hibrido";
+    salary: number;
+    payType: "Mensual" | "Semanal" | "Quincenal";
+    postedTime: string;
+    postedDate: Date;
+    featured: boolean;
+    urgent: boolean;
+    rating: number | null;
+    category: "tecnologia" | "ventas" | "admin" | "servicios";
+    experience: number; // años de experiencia requeridos (0 = sin experiencia)
+    jornada: "completo" | "parcial" | "flexible";
 }
 
 export interface JobDetailPanelProps {
-  job: JobDetailPanelType;
+    job: JobDetailPanelType;
 }
