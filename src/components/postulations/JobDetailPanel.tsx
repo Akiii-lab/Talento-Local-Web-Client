@@ -77,39 +77,28 @@ export function JobDetailPanel({ job }: JobDetailPanelProps) {
 
       {/* Descripción */}
       <div className="space-y-4">
-        <p className="text-sm text-gray-700">
-          Sé parte de Nuestro Equipo de trabajo en la empresa líder en Aseo y
-          Mantenimiento, buscamos todero-jardinero en la ciudad de Santa Marta
-          para incorporarse de forma inmediata
-        </p>
-
         <div>
-          <p className="font-semibold text-sm mb-2">
-            Entre tus responsabilidades diarias se incluyen:
-          </p>
-          <ol className="text-sm text-gray-700 space-y-2 list-decimal list-inside">
-            <li>
-              Desarrollar los servicios de mantenimiento locativo como resane,
-              enchape, pintura, plomería, según lo asignado por los superiores
-              y jefes, con capacitación en alturas y diligenciamiento de
-              formatos establecidos para cada actividad
-            </li>
-            <li>Mantenimiento y cuidado de jardines, parques y áreas verdes.</li>
-          </ol>
-          <p className="text-sm text-gray-700 mt-2">
-            Serás responsable de la planificación y ejecución de tareas de
-            poda, riego, fertilización y control de malezas, limpieza y
-            rastrillado, recortes, abonado, conservación de trabajo.
+          <p className="font-semibold text-sm mb-2">Descripción del puesto:</p>
+          <p className="text-sm text-gray-700 whitespace-pre-line">
+            {job.description}
           </p>
         </div>
 
         <div>
-          <p className="text-sm text-gray-700">
-            <strong>Disponibilidad:</strong> Lunes a Domingo, salario $
-            1.423.500 + Aux transp (200.000) + Prestaciones Sociales,
+          <p className="font-semibold text-sm mb-2">Requisitos:</p>
+          <p className="text-sm text-gray-700 whitespace-pre-line">
+            {job.requirements}
           </p>
-          <p className="text-sm text-gray-700">Contrato Fijo</p>
         </div>
+
+        {job.benefits && (
+          <div>
+            <p className="font-semibold text-sm mb-2">Beneficios:</p>
+            <p className="text-sm text-gray-700 whitespace-pre-line">
+              {job.benefits}
+            </p>
+          </div>
+        )}
       </div>
     </Card>
   );

@@ -17,6 +17,9 @@ export interface JobDetailPanelType {
     category: "tecnologia" | "ventas" | "admin" | "servicios";
     experience: number; // años de experiencia requeridos (0 = sin experiencia)
     jornada: "completo" | "parcial" | "flexible";
+    description: string;
+    requirements: string;
+    benefits?: string;
 }
 
 export interface JobDetailPanelProps {
