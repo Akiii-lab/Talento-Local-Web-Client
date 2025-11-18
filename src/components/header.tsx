@@ -4,9 +4,16 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import { usePathname, useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { BellIcon, Search } from "lucide-react";
+import { BellIcon, Search, Settings, Briefcase, Heart, LogOut } from "lucide-react";
 import { useUserStore } from "@/app/store/userStore";
-import { Input } from "./ui/input";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
 
@@ -24,16 +31,41 @@ export default function Header() {
                         <div className="flex flex-row items-center gap-2">
                             <BellIcon size={18} className="hover:cursor-pointer text-muted-foreground" />
                         </div>
-                        <div className="flex flex-row items-center gap-2 text-sm">
-                            <span className="font-semibold">
-                                Cristian Garcia
-                            </span>
-                            <Avatar>
-                                <AvatarFallback className="p-3 bg-blue-200">
-                                    CG
-                                </AvatarFallback>
-                            </Avatar>
-                        </div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <div className="flex flex-row items-center gap-2 text-sm hover:cursor-pointer">
+                                    <span className="font-semibold">
+                                        Cristian Garcia
+                                    </span>
+                                    <Avatar>
+                                        <AvatarFallback className="p-3 bg-blue-200">
+                                            CG
+                                        </AvatarFallback>
+                                    </Avatar>
+                                </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => router.push("/config")} className="cursor-pointer">
+                                    <Settings className="mr-2 h-4 w-4" />
+                                    <span>Configuración</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer">
+                                    <Briefcase className="mr-2 h-4 w-4" />
+                                    <span>Mis Postulaciones</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer">
+                                    <Heart className="mr-2 h-4 w-4" />
+                                    <span>Favoritos</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className="text-red-600 cursor-pointer">
+                                    <LogOut className="mr-2 h-4 w-4" />
+                                    <span>Cerrar Sesión</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 ) : (
                     <Button

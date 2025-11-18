@@ -1,34 +1,16 @@
+import { JobCardProps } from "@/types/jobs/JobCard.types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MapPinIcon, MoreVerticalIcon } from "lucide-react";
+import { Heart, HeartIcon, MapPinIcon, MoreVerticalIcon } from "lucide-react";
+import { useState } from "react";
 
-interface JobCardProps {
-  job: {
-    id: number;
-    title: string;
-    subtitle?: string;
-    company: string;
-    location: string;
-    type: string;
-    schedule: string;
-    modality: string;
-    salary?: string;
-    postedTime: string;
-    featured: boolean;
-    urgent: boolean;
-    rating: number | null;
-  };
-  onClick?: () => void;
-}
-
-export function JobCard({ job, onClick }: JobCardProps) {
+export function JobCard({ job, onClick, className }: JobCardProps) {
+  const [favorited, setFavorited] = useState(false);
   return (
     <Card
       onClick={onClick}
-      className={`p-4 hover:shadow-lg transition-shadow cursor-pointer ${
-        job.featured ? "border-blue-500 border-2" : ""
-      }`}
+      className={`p-4 hover:shadow-lg transition-shadow cursor-pointer ${className ?? ""}`}
     >
       {/* Header con badges */}
       <div className="flex items-start justify-between mb-2">
@@ -39,13 +21,15 @@ export function JobCard({ job, onClick }: JobCardProps) {
             </Badge>
           )}
           {job.urgent && (
-            <Badge variant="destructive" className="text-xs">
+            <Badge variant="destructive" className="text-xs text-white">
               Se precisa Urgente
             </Badge>
           )}
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <MoreVerticalIcon size={16} />
+        <Button variant="ghost" size="icon" className="h-8 w-8 hover:cursor-pointer"
+          onClick={()=> setFavorited(!favorited)}
+        >
+          <Heart size={16} className={favorited ? "text-red-500" : "text-gray-400"} />
         </Button>
       </div>
 
@@ -75,7 +59,7 @@ export function JobCard({ job, onClick }: JobCardProps) {
       {/* Salario */}
       {job.salary && (
         <p className="text-sm font-semibold text-green-700 mb-3">
-          {job.salary}
+          {`$ ${job.salary.toLocaleString('es-CO')} (${job.payType ?? 'Mensual'})`}
         </p>
       )}
 
