@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Camera, Mail, MapPin, Phone, Briefcase } from "lucide-react";
 import { UserData } from "@/types/user/user.types";
+import { CVUpload } from "./CVUpload";
 
 interface UserProfileTabProps {
   userData: UserData;
@@ -20,7 +21,6 @@ export function UserProfileTab({ userData, setUserData }: UserProfileTabProps) {
         <CardDescription>Actualiza tu información de perfil público</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Avatar */}
         <div className="flex items-center gap-4">
           <Avatar className="w-24 h-24">
             <AvatarImage src="" />
@@ -92,6 +92,18 @@ export function UserProfileTab({ userData, setUserData }: UserProfileTabProps) {
             rows={3}
           />
         </div>
+
+        {/* CV Upload */}
+        <CVUpload
+          currentCV={userData.cv}
+          onCVChange={(file) => {
+            if (file) {
+              setUserData({ ...userData, cv: file.name });
+            } else {
+              setUserData({ ...userData, cv: null });
+            }
+          }}
+        />
       </CardContent>
     </Card>
   );

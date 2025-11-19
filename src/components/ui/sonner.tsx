@@ -9,22 +9,32 @@ const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
 
   return (
-    <Sonner
-      theme={theme as ToasterProps["theme"]}
-      className="toaster group"
-      toastOptions={{
-        classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
-          actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-          cancelButton:
-            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-        },
-      }}
-      {...props}
-    />
+    <>
+      <style>{`
+        .sonner-toast {
+          background-color: white !important;
+          color: black !important;
+          border: 1px solid #d1d5db !important;
+        }
+        .sonner-toast-description {
+          color: #4b5563 !important;
+        }
+        .sonner-toast button {
+          color: black !important;
+        }
+      `}</style>
+      <Sonner
+        theme={theme as ToasterProps["theme"]}
+        className="toaster group"
+        toastOptions={{
+          classNames: {
+            toast: "sonner-toast",
+            description: "sonner-toast-description",
+          },
+        }}
+        {...props}
+      />
+    </>
   )
 }
 

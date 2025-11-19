@@ -46,7 +46,6 @@ export function FilterBar({
 }: FilterBarProps) {
   return (
     <div className="mb-6 flex flex-wrap gap-3 items-center bg-transparent p-4 rounded-lg">
-      {/* Ordenar */}
       <div className="relative">
         <Select value={orderBy} onValueChange={setOrderBy}>
           <SelectTrigger className="w-[180px] bg-white border-gray-300 hover:border-gray-400 transition-colors">

@@ -1,27 +1,40 @@
 export interface JobDetailPanelType {
     id: number;
     title: string;
-    subtitle?: string;
-    company: string;
-    location: string; // siempre sera "santa marta, magdalena"
-    type: string;
-    schedule: string; //horario
-    modality: "Presencial" | "Remoto" | "Hibrido";
-    salary: number;
-    payType: "Mensual" | "Semanal" | "Quincenal";
-    postedTime: string;
-    postedDate: Date;
-    featured: boolean; // se pone en true a traves de algoritmos default false
-    urgent: boolean; 
-    rating: number | null; // se obtiene del perfil de la empresa
-    category: "tecnologia" | "ventas" | "admin" | "servicios";
-    experience: number; // años de experiencia requeridos (0 = sin experiencia)
-    jornada: "completo" | "parcial" | "flexible";
+    subTitle: string;
     description: string;
-    requirements: string;
-    benefits?: string;
+    modality: "Presencial" | "Remoto" | "Híbrido";
+    salary: number;
+    requeriments: string;
+    benefits: string;
+    yearsExperience: number;
+    location: string;
+    journey: string;
+    schedule: string;
+    availablePlaces: number;
+    status: string;
+    contractType: string;
+    paymentType: "Mensual" | "Semanal" | "Quincenal";
+    publicationDate: string;
+    closingDate: string | null;
+    companyId: number;
+    categoryId: number;
+}
+
+export interface JobDetailPanelProps {
+    job: JobDetailPanelType;
+    postuledJob? : PostuledJobs;
 }
 
 export interface JobDetailPanelProps {
     job: JobDetailPanelType;
 }
+
+export interface PostuledJobs {
+    userId: number;
+    offerId: number;
+    applyed: boolean;
+    statusId: StatusPostulationType;
+}
+
+export type StatusPostulationType = 'Pendiente' | 'En revisión' | 'Aceptada' | 'Rechazada';

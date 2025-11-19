@@ -1,24 +1,43 @@
+import { CompanyData, UserData } from '@/types/user/user.types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface UserStore {
-	user: boolean;
-	setUser: (value: boolean) => void;
-	userType: 'normal' | 'empresa' | null;
-	setUserType: (type: 'normal' | 'empresa' | null) => void;
+	user: UserData | null ;
+	setUser: (value: UserData | null ) => void;
+	clearUser: () => void;
 }
 
 export const useUserStore = create<UserStore>()(
 	persist(
 		(set) => ({
-			user: false,
+			user: null,
 			setUser: (value) => set({ user: value }),
-			userType: null,
-			setUserType: (type) => set({ userType: type }),
+			clearUser: () => set({ user: null }),
 		}),
 		{
-			name: 'user-storage', // nombre de la clave en localStorage
-			storage: createJSONStorage(() => localStorage), // usa localStorage
+			name: 'user-storage', 
+			storage: createJSONStorage(() => localStorage), 
+		}
+	)
+);
+
+interface CompanyStore {
+	company: CompanyData | null;
+	setCompany: (value: CompanyData | null) => void;
+	clearCompany: () => void;
+}
+
+export const useCompanyStore = create<CompanyStore>()(
+	persist(
+		(set) => ({
+			company: null,
+			setCompany: (value) => set({ company: value }),
+			clearCompany: () => set({ company: null }),
+		}),
+		{
+			name: 'company-storage',
+			storage: createJSONStorage(() => localStorage),
 		}
 	)
 );

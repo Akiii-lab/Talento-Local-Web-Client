@@ -15,8 +15,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Briefcase, MapPin, DollarSign, Clock, Users, FileText, Building2 } from "lucide-react";
 import { CreateJobFormData } from "@/types/jobs/CreateJob.types";
+import { useCompanyStore } from "@/app/store/userStore";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function CreateJobPage() {
+    const { company } = useCompanyStore();
+    const router = useRouter();
     const [formData, setFormData] = useState<CreateJobFormData>({
         title: "",
         subtitle: "",
@@ -46,6 +51,11 @@ export default function CreateJobPage() {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
+    if(!company) {
+        toast("Debes iniciar sesión como empresa para crear una oferta de empleo.");
+        router.push("/");
+    }
+
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 py-8 px-4">
             <div className="max-w-4xl mx-auto">
@@ -60,7 +70,6 @@ export default function CreateJobPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Información Básica */}
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">

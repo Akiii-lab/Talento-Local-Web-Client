@@ -2,22 +2,50 @@
 
 import Image from 'next/image';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
-import { set, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '@/app/store/userStore';
+import { useCompanyStore, useUserStore } from '@/app/store/userStore';
+import { toast } from 'sonner';
 
 export const LoginComponent = () => {
   const router = useRouter();
   const form = useForm();
-  const { setUser,setUserType } = useUserStore();
+  const { setUser } = useUserStore();
+  const { setCompany } = useCompanyStore();
 
-  const handleLogin = async() => {
-    setUser(true);
-    setUserType("normal");
+  const handleLogin = async () => {
+    try {
+      const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: form.getValues("email"),
+        password: form.getValues("password"),
+      }),
+    });
+
+    const data = await res.json();
+
+    if(!res.ok) {
+      throw new Error();
+    }
+
+    if (data.type === "company") {
+      setCompany(data.user);
+    }
+    else {
+      setUser(data.user);
+    }
     router.push("/home");
+  } catch (error) {
+    toast("Error al iniciar sesión. Verifica tus credenciales.");
   }
+}
+
 
   return (
     <div className="flex flex-col border shadow-2xl rounded-lg p-8 gap-4 w-sm">
@@ -72,7 +100,7 @@ export const LoginComponent = () => {
           no tienes cuenta?
         </span>
         <span className='font-medium text-(--per-primary) underline hover:text-(--per-secondary)'
-        onClick={() => router.push('/signup')}>
+          onClick={() => router.push('/signup')}>
           Registrate
         </span>
       </div>
@@ -101,6 +129,7 @@ const AppleSVG = () => {
     </>
   )
 }
+
 const GoogleSVG = () => {
   return (
     <>

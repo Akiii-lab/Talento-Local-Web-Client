@@ -1,54 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { useUserStore } from "@/app/store/userStore";
+import { useCompanyStore, useUserStore } from "@/app/store/userStore";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save } from "lucide-react";
-import { UserData, CompanyData } from "@/types/user/user.types";
-import { UserTypeSelector } from "@/components/configuracion/UserTypeSelector";
-import { EmptyStateMessage } from "@/components/configuracion/EmptyStateMessage";
 import { UserProfileTab } from "@/components/configuracion/UserProfileTab";
 import { UserAccountTab } from "@/components/configuracion/UserAccountTab";
 import { UserPrivacyTab } from "@/components/configuracion/UserPrivacyTab";
 import { CompanyProfileTab } from "@/components/configuracion/CompanyProfileTab";
 import { CompanyAccountTab } from "@/components/configuracion/CompanyAccountTab";
 import { CompanyBillingTab } from "@/components/configuracion/CompanyBillingTab";
+import { EmptyStateMessage } from "@/components/configuracion/EmptyStateMessage";
+import { toast } from "sonner";
 
+//TODO: agregar config a backend de perfil
 export default function ConfiguracionPage() {
-    const { userType, setUserType } = useUserStore();
+    const { user, setUser } = useUserStore();
+    const { company, setCompany } = useCompanyStore();
     const [activeTab, setActiveTab] = useState("perfil");
-
-    // Estado para usuario normal
-    const [userData, setUserData] = useState({
-        nombre: "Cristian Garcia",
-        email: "cristian.garcia@example.com",
-        telefono: "+57 300 123 4567",
-        ubicacion: "Santa Marta, Magdalena",
-        bio: "Desarrollador Full Stack con experiencia en React y Node.js",
-        habilidades: "JavaScript, React, Node.js, TypeScript",
-    });
-
-    // Estado para empresa
-    const [companyData, setCompanyData] = useState({
-        nombreEmpresa: "Tech Solutions SAS",
-        nit: "900.123.456-7",
-        email: "contacto@techsolutions.com",
-        telefono: "+57 300 987 6543",
-        ubicacion: "Santa Marta, Magdalena",
-        descripcion: "Empresa de desarrollo de software especializada en soluciones web y móviles",
-        sector: "Tecnología",
-        sitioWeb: "https://techsolutions.com",
-    });
+    const [userData, setUserData] = useState(user);
+    const [companyData, setCompanyData] = useState(company);
 
     const handleUserSave = () => {
-        console.log("Guardando datos de usuario:", userData);
-        alert("Configuración guardada exitosamente!");
+        if (userData) {
+            setUser(userData);
+            toast("Configuración guardada exitosamente!");
+        }
     };
 
     const handleCompanySave = () => {
-        console.log("Guardando datos de empresa:", companyData);
-        alert("Configuración guardada exitosamente!");
+        if (companyData) {
+            setCompany(companyData);
+            toast("Configuración guardada exitosamente!");
+        }
     };
 
     return (
@@ -60,11 +45,11 @@ export default function ConfiguracionPage() {
                     <p className="text-gray-600">Administra tu perfil y preferencias</p>
                 </div>
 
-                {/* Selector de tipo de usuario - solo si no tiene userType definido */}
-                {!userType && <UserTypeSelector userType={userType} setUserType={setUserType} />}
+                {/* Mostrar configuración según tipo de usuario */}
+                {!user && !company && <EmptyStateMessage />}
 
                 {/* Configuración para Usuario Normal */}
-                {userType === 'normal' && (
+                {user && (
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                         <TabsList className="grid w-full grid-cols-3">
                             <TabsTrigger value="perfil">Perfil</TabsTrigger>
@@ -74,12 +59,12 @@ export default function ConfiguracionPage() {
 
                         {/* Tab Perfil */}
                         <TabsContent value="perfil" className="space-y-6">
-                            <UserProfileTab userData={userData} setUserData={setUserData} />
+                            {userData && <UserProfileTab userData={userData} setUserData={setUserData} />}
                         </TabsContent>
 
                         {/* Tab Cuenta */}
                         <TabsContent value="cuenta" className="space-y-6">
-                            <UserAccountTab userData={userData} setUserData={setUserData} />
+                            {userData && <UserAccountTab userData={userData} setUserData={setUserData} />}
                         </TabsContent>
 
                         {/* Tab Privacidad */}
@@ -98,7 +83,7 @@ export default function ConfiguracionPage() {
                 )}
 
                 {/* Configuración para Empresa */}
-                {userType === 'empresa' && (
+                {company && (
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                         <TabsList className="grid w-full grid-cols-3">
                             <TabsTrigger value="perfil">Perfil Empresarial</TabsTrigger>
@@ -108,12 +93,12 @@ export default function ConfiguracionPage() {
 
                         {/* Tab Perfil Empresarial */}
                         <TabsContent value="perfil" className="space-y-6">
-                            <CompanyProfileTab companyData={companyData} setCompanyData={setCompanyData} />
+                            {companyData && <CompanyProfileTab companyData={companyData} setCompanyData={setCompanyData} />}
                         </TabsContent>
 
                         {/* Tab Cuenta */}
                         <TabsContent value="cuenta" className="space-y-6">
-                            <CompanyAccountTab companyData={companyData} setCompanyData={setCompanyData} />
+                            {companyData && <CompanyAccountTab companyData={companyData} setCompanyData={setCompanyData} />}
                         </TabsContent>
 
                         {/* Tab Facturación */}
@@ -130,9 +115,6 @@ export default function ConfiguracionPage() {
                         </div>
                     </Tabs>
                 )}
-
-                {/* Mensaje si no hay tipo seleccionado */}
-                {!userType && <EmptyStateMessage />}
             </div>
         </div>
     );

@@ -1,13 +1,30 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { BuisnessMetrics } from "@/types/metrics/metrics";
 import { BriefcaseBusinessIcon, SearchIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
+    const [buisnessStats, setBuisnessStats] = useState<BuisnessMetrics>();
+
+    const fetchBuisnessMetrics = async () => {
+        try {
+            const response = await fetch('/api/metrics/buisness');
+            const data = await response.json();
+            setBuisnessStats(data);
+        } catch (error) {
+            console.error('Error fetching business metrics:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchBuisnessMetrics();
+    }, []);
+
     const router = useRouter();
     return (
         <div className="relative w-full h-screen flex items-start justify-center">
@@ -28,7 +45,7 @@ export default function HomePage() {
                             <input placeholder="Buscar empleo" className="ml-2 border-none focus:outline-none" />
                         </div>
                         <Button onClick={() => router.push("/postulations")} className="bg-(--per-fourth)">
-                            <Label>
+                            <Label className="hover:cursor-pointer">
                                 Buscar empleo
                             </Label>
                             <SearchIcon size={18} className="text-secondary" />
@@ -39,15 +56,15 @@ export default function HomePage() {
                 {/* Sección de estadísticas */}
                 <div className="flex flex-col md:flex-row gap-6 mt-10 w-full max-w-4xl justify-center items-center">
                     <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60">
-                        <span className="text-3xl font-bold text-blue-600">+2,500</span>
+                        <span className="text-3xl font-bold text-blue-600">+{buisnessStats?.jobsPosted}</span>
                         <span className="text-gray-700 mt-2">Empleos publicados</span>
                     </div>
                     <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60">
-                        <span className="text-3xl font-bold text-green-600">+1,200</span>
+                        <span className="text-3xl font-bold text-green-600">+{buisnessStats?.activeCompanies}</span>
                         <span className="text-gray-700 mt-2">Empresas activas</span>
                     </div>
                     <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60">
-                        <span className="text-3xl font-bold text-purple-600">+8,000</span>
+                        <span className="text-3xl font-bold text-purple-600">+{buisnessStats?.registeredUsers}</span>
                         <span className="text-gray-700 mt-2">Usuarios registrados</span>
                     </div>
                 </div>
@@ -59,7 +76,7 @@ export default function HomePage() {
                     >
                         Crear cuenta gratis
                     </Button>
-                    <Button variant="outline" className="w-full md:w-auto border-blue-500 text-blue-500 font-semibold px-8 py-3 rounded-lg shadow hover:bg-blue-50 transition"
+                    <Button variant="outline" className="w-full hover:cursor-pointer md:w-auto border-blue-500 text-blue-500 font-semibold px-8 py-3 rounded-lg shadow hover:bg-blue-50 transition"
                         onClick={()=> router.push("/jobs/create")}
                     >
                         Publicar empleo
