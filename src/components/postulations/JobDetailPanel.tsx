@@ -84,7 +84,7 @@ export function JobDetailPanel({ job, postuledJob }: JobDetailPanelProps) {
         </Button>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 mt-3">
         <div className="flex items-center gap-2 text-sm">
           <BriefcaseIcon size={18} className="text-gray-500" />
           <span>{job.contractType}</span>

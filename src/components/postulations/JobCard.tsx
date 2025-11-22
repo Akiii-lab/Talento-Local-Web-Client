@@ -29,12 +29,12 @@ export function JobCard({ job, onClick, className }: JobCardProps) {
         <div className="flex gap-2 flex-wrap">
           {job.status === "Destacado" && (
             <Badge className="bg-blue-600 text-white text-xs font-semibold">
-              ⭐ Destacado
+              Destacado
             </Badge>
           )}
           {job.status === "Urgente" && (
             <Badge variant="destructive" className="text-xs text-white font-semibold">
-              🔥 Urgente
+              Urgente
             </Badge>
           )}
         </div>
