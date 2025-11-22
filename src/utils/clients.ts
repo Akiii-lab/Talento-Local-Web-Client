@@ -13,3 +13,11 @@ export const GetProfilesClient = () => {
     }
     return url;
 }
+
+export const GetNotificationsClient = () => {
+    const url = process.env.NEXT_PUBLIC_NOTIFICATIONS_URL;
+    if(!url){
+        throw new Error("NotificationsApiUrl is not defined");
+    }
+    return url;
+}

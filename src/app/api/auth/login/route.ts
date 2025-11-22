@@ -4,6 +4,15 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
     const { email, password } = await request.json();
     const api = GetProfilesClient();
+    // Mocked response for testing purposes
+    const mockedUser = {
+        id: "ffd275b4-3c8e-4e2b-9c6d-1a2b3c4d5e6f",
+        name: "Mocked User",
+        email: "V0CwI@example.com",
+        type: "user"
+    }
+    return new NextResponse(JSON.stringify({ user: mockedUser, type: "user", ok: true }), { status: 200 });
+
     const response = await fetch(`${api}/auth/login`, {
         method: "POST",
         headers: {
