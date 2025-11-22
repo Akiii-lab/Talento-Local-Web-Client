@@ -29,10 +29,11 @@ export default function MyJobsPage() {
             const jobsResponse = await fetch("/api/offers");
             const allJobs: JobDetailPanelType[] = await jobsResponse.json();
 
+            //TODO: fix this when userid and companyid are switched to string in api
             // Filter jobs to only show those posted by this company
-            const companyJobs = allJobs.filter(job => job.companyId === companyId);
+            /* const companyJobs = allJobs.filter(job => job.companyId === companyId); */
 
-            setJobs(companyJobs);
+            /* setJobs(companyJobs); */
         } catch (error) {
             console.error("Error cargando convocatorias:", error);
             toast.error("Error al cargar las convocatorias");
