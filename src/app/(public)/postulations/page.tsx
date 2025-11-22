@@ -4,13 +4,17 @@ import { useState, useEffect } from "react";
 import { JobCard } from "@/components/postulations/JobCard";
 import { JobDetailPanel } from "@/components/postulations/JobDetailPanel";
 import { FilterBar } from "@/components/postulations/FilterBar";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { JobDetailPanelType, PostuledJobs } from "@/types/jobs/JobDetailPanel.types";
 import { useUserStore } from "@/app/store/userStore";
+import { toast } from "sonner";
 
 
 export default function PostulationsPage() {
     const { user } = useUserStore();
     const [jobs, setJobs] = useState<JobDetailPanelType[]>([]);
+    const [loading, setLoading] = useState(true);
     const [postuledJobs, setPostuledJobs] = useState<PostuledJobs[]>([]);
     const [selectedJob, setSelectedJob] = useState<JobDetailPanelType | null>(null);
     const [orderBy, setOrderBy] = useState("recientes");
@@ -21,17 +25,28 @@ export default function PostulationsPage() {
     const [experienceFilter, setExperienceFilter] = useState<number | null>(null);
     const [jornadaFilter, setJornadaFilter] = useState("cualquiera");
     const [categoryFilter, setCategoryFilter] = useState("todas");
+    const [currentPage, setCurrentPage] = useState(1);
+    const JOBS_PER_PAGE = 3;
 
     const fetchJobs = async () => {
         try {
+            setLoading(true);
             const response = await fetch("/api/offers");
             const data = await response.json();
-            setJobs(data);
-            if (data.length > 0) {
-                setSelectedJob(data[0]);
+            if (!data.ok) {
+                throw new Error();
+            }
+            const jobsArray = Array.isArray(data.offers) ? data.offers : [];
+            setJobs(jobsArray);
+            if (jobsArray.length > 0) {
+                setSelectedJob(jobsArray[0]);
             }
         } catch (error) {
-            console.error("Error cargando ofertas:", error);
+            console.error("Error fetching jobs:", error);
+            toast.error("Error cargando ofertas");
+            setJobs([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -39,14 +54,17 @@ export default function PostulationsPage() {
         if (!user) return;
         try {
             const userId = user.id;
-            console.log("Fetching postuled jobs for user:", userId);
             const response = await fetch(`/api/postulation/${userId}`, {
                 method: "GET",
             });
             const data = await response.json();
-            setPostuledJobs(data);
+            setPostuledJobs(data.postulations || []);
+            if (!data.ok) {
+                throw new Error();
+            }
         } catch (error) {
-            console.error("Error cargando postulaciones:", error);
+            console.error("Error fetching postuled jobs:", error);
+            toast.error("Error cargando postulaciones. Es posible que sus postulaciones no se muestren correctamente.");
         }
     };
 
@@ -119,9 +137,25 @@ export default function PostulationsPage() {
             return 0;
         });
 
+    const totalPages = Math.ceil(filteredPostulations.length / JOBS_PER_PAGE);
+    const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
+    const paginatedJobs = filteredPostulations.slice(startIndex, startIndex + JOBS_PER_PAGE);
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto flex flex-col">
                 <FilterBar
                     orderBy={orderBy}
                     setOrderBy={setOrderBy}
@@ -140,26 +174,99 @@ export default function PostulationsPage() {
                     categoryFilter={categoryFilter}
                     setCategoryFilter={setCategoryFilter}
                 />
-
                 <div className="mb-4">
                     <p className="text-sm text-gray-600">
                         <strong>{filteredPostulations.length}</strong> Ofertas de empleo en Santa Marta, Magdalena
                     </p>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
                     <div className="space-y-4">
-                        {filteredPostulations.map((job) => (
-                            <JobCard
-                                key={job.id || Math.random()}
-                                job={job as JobDetailPanelType}
-                                onClick={() => setSelectedJob(job)}
-                                className={selectedJob && selectedJob.id === job.id ? "border-blue-500 border-2" : ""}
-                            />
-                        ))}
+                        {loading ? (
+                            <>
+                                <div className="bg-white rounded-lg p-4 space-y-3">
+                                    <Skeleton className="h-6 w-3/4" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-2/3" />
+                                </div>
+                                <div className="bg-white rounded-lg p-4 space-y-3">
+                                    <Skeleton className="h-6 w-3/4" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-2/3" />
+                                </div>
+                                <div className="bg-white rounded-lg p-4 space-y-3">
+                                    <Skeleton className="h-6 w-3/4" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-2/3" />
+                                </div>
+                            </>
+                        ) : (
+                            paginatedJobs.map((job) => (
+                                <JobCard
+                                    key={job.id || Math.random()}
+                                    job={job as JobDetailPanelType}
+                                    onClick={() => setSelectedJob(job)}
+                                    className={selectedJob && selectedJob.id === job.id ? "border-blue-500 border-2" : ""}
+                                />
+                            ))
+                        )}
                     </div>
                     <div className="hidden lg:block sticky top-4 h-fit">
-                        {/*TODO: arreglar los arrays de postuled jobs no aplica la oferta*/}
-                        {selectedJob && <JobDetailPanel job={selectedJob} postuledJob={postuledJobs.find(p => p.offerId === selectedJob.id)} />}
+                        {loading ? (
+                            <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
+                                <div className="flex items-start justify-between mb-6">
+                                    <div className="flex-1 space-y-2">
+                                        <Skeleton className="h-8 w-3/4" />
+                                        <Skeleton className="h-4 w-1/2" />
+                                    </div>
+                                    <Skeleton className="h-12 w-12 rounded" />
+                                </div>
+                                <Skeleton className="h-4 w-full" />
+                                <div className="space-y-3">
+                                    <Skeleton className="h-6 w-1/3" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-2/3" />
+                                </div>
+                                <div className="space-y-3 border-t pt-4">
+                                    <Skeleton className="h-6 w-1/3" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-full" />
+                                </div>
+                                <div className="space-y-3 border-t pt-4">
+                                    <Skeleton className="h-6 w-1/3" />
+                                    <Skeleton className="h-4 w-full" />
+                                </div>
+                                <div className="flex gap-3 pt-4">
+                                    <Skeleton className="h-10 flex-1" />
+                                    <Skeleton className="h-10 w-10" />
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                {selectedJob && <JobDetailPanel job={selectedJob} postuledJob={postuledJobs.find(p => p.offerId === selectedJob.id)} />}
+                                <div className="flex gap-2 justify-center mt-4">
+                                    <Button
+                                        onClick={handlePreviousPage}
+                                        disabled={currentPage === 1}
+                                        variant="outline"
+                                        className="hover:cursor-pointer"
+                                    >
+                                        Anterior
+                                    </Button>
+                                    <span className="flex items-center px-4 text-sm text-gray-600">
+                                        Página {currentPage} de {totalPages}
+                                    </span>
+                                    <Button
+                                        onClick={handleNextPage}
+                                        disabled={currentPage === totalPages}
+                                        variant="outline"
+                                        className="hover:cursor-pointer"
+                                    >
+                                        Siguiente
+                                    </Button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

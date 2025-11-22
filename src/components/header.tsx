@@ -14,7 +14,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CompanyData, UserData } from "@/types/user/user.types";
+import { UserDataSimplified } from "@/types/user/user.types";
 import { useState, useEffect } from "react";
 import { Notification } from "@/types/notifications/notification.types";
 
@@ -24,7 +24,7 @@ export default function Header() {
     const headerPaths = ['/home', '/ofrecer-empleo', '/acerca-de'];
     const { user, clearUser } = useUserStore();
     const { company, clearCompany } = useCompanyStore();
-    const loggedUser: UserData | CompanyData | null = user || company || null;
+    const loggedUser: UserDataSimplified | UserDataSimplified | null = user || company || null;
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
 
@@ -49,9 +49,9 @@ export default function Header() {
         router.push("/");
     }
 
-    const handleFallbackAvatar = (user: UserData | CompanyData) => {
-        if (user && user.nombre) {
-            const names = user.nombre.split(" ");
+    const handleFallbackAvatar = (user: UserDataSimplified) => {
+        if (user && user.name) {
+            const names = user.name.split(" ");
             const initials = names.map((n) => n.charAt(0).toUpperCase()).join("");
             return initials;
         }
@@ -73,7 +73,7 @@ export default function Header() {
         return (
             <>
                 {loggedUser ? (
-                    <div className="flex flex-row border rounded-4xl p-3 items-center gap-2">
+                    <div className="flex flex-row border rounded-4xl p-3 items-center gap-3">
                         <div className="flex flex-row items-center gap-2">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -116,7 +116,7 @@ export default function Header() {
                             <DropdownMenuTrigger asChild>
                                 <div className="flex flex-row items-center gap-2 text-sm hover:cursor-pointer">
                                     <span className="font-semibold">
-                                        {loggedUser?.nombre}
+                                        {loggedUser?.name}
                                     </span>
                                     <Avatar>
                                         <AvatarFallback className="p-3 bg-blue-200">
@@ -199,7 +199,7 @@ export default function Header() {
                         <Button
                             variant="link"
                             className={`hover:cursor-pointer decoration-(--per-primary) ${actualPath === '/acerca-de' ? 'underline underline-offset-8' : ''}`}
-                        //onClick={() => router.push("/acerca-de")}
+                            onClick={() => router.push("/about")}
                         >
                             Acerca de
                         </Button>

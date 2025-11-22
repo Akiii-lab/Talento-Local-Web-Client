@@ -44,8 +44,8 @@ export function CompanyProfileTab({ companyData, setCompanyData }: CompanyProfil
             </Label>
             <Input
               id="nombreEmpresa"
-              value={companyData.nombreEmpresa}
-              onChange={(e) => setCompanyData({ ...companyData, nombreEmpresa: e.target.value })}
+              value={companyData.nombre}
+              onChange={(e) => setCompanyData({ ...companyData, nombre: e.target.value })}
             />
           </div>
           <div className="space-y-2">

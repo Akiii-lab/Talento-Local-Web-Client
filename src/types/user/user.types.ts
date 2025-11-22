@@ -1,5 +1,5 @@
 export interface UserData {
-  id: number;
+  id: string;
   nombre: string;
   email: string;
   telefono: string;
@@ -10,7 +10,7 @@ export interface UserData {
 }
 
 export interface CompanyData {
-  id: number;
+  id: string;
   nombre: string;
   nit: string;
   email: string;
@@ -21,4 +21,11 @@ export interface CompanyData {
   sitioWeb: string;
 }
 
-export type UserType = 'normal' | 'empresa' | null;
+export interface UserDataSimplified {
+  id: string;
+  name: string;
+  email: string;
+  type: UserType;
+}
+
+export type UserType = 'user' | 'company' | null;

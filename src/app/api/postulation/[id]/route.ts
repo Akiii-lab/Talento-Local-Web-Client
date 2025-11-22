@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server";
+import { GetGestionClient } from "@/utils/clients";
+import { NextRequest, NextResponse } from "next/server";
 
-//TODO: toca al grupo de carlos romero, etc.
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { id: userId } = await params;
 
@@ -8,29 +8,26 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         return new Response (JSON.stringify({message: "User ID is required"}), {status: 400});
     }
 
-    const postuledJobs = [
-        {
-            id: "1",
-            offerId: 1,
-            userId: "user123",
-            applyed: true,
-            statusId: "En revisión"
-        },
-        {
-            id: "2",
-            offerId: 2,
-            userId: "user123",
-            applyed: true,
-            statusId: "En revisión"
-        },
-        {
-            id: "3",
-            offerId: 3,
-            userId: "user123",
-            applyed: false,
-            statusId: "Pendiente"
+    try {
+        const api = GetGestionClient();
+        const response = await fetch(`${api}/postulations/user/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (response.status === 400) {
+            return new NextResponse(JSON.stringify({ postulations: [], message: "No postulations found for this user", ok: false }), { status: 200 });
         }
-    ]
-    
-    return new Response (JSON.stringify(postuledJobs), {status: 200});
+
+        console.log("Fetching postulations for user ID:", userId);
+        if (response.status !== 200) {
+            return new NextResponse(JSON.stringify({ postulations: [], error: "Error fetching postulations", ok: false }), { status: response.status });
+        }
+        const postuledJobs = await response.json();
+        return new NextResponse(JSON.stringify({ postulations: postuledJobs, ok: true }), {status: 200});
+    } catch (error) {
+        return new NextResponse(JSON.stringify({ message: "Error fetching postulations", error, ok: false }), { status: 500 });
+    }
 }

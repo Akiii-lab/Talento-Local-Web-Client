@@ -14,13 +14,13 @@ import { CompanyBillingTab } from "@/components/configuracion/CompanyBillingTab"
 import { EmptyStateMessage } from "@/components/configuracion/EmptyStateMessage";
 import { toast } from "sonner";
 
-//TODO: agregar config a backend de perfil
+//TODO: fetch userdata to profile get user by id and sen userdata to tab
 export default function ConfiguracionPage() {
     const { user, setUser } = useUserStore();
     const { company, setCompany } = useCompanyStore();
     const [activeTab, setActiveTab] = useState("perfil");
-    const [userData, setUserData] = useState(user);
-    const [companyData, setCompanyData] = useState(company);
+    const [userData, setUserData] = useState(null);
+    const [companyData, setCompanyData] = useState(null);
 
     const handleUserSave = () => {
         if (userData) {
@@ -59,12 +59,12 @@ export default function ConfiguracionPage() {
 
                         {/* Tab Perfil */}
                         <TabsContent value="perfil" className="space-y-6">
-                            {userData && <UserProfileTab userData={userData} setUserData={setUserData} />}
+                            {/* {userData && <UserProfileTab userData={userData} setUserData={setUserData} />} */}
                         </TabsContent>
 
                         {/* Tab Cuenta */}
                         <TabsContent value="cuenta" className="space-y-6">
-                            {userData && <UserAccountTab userData={userData} setUserData={setUserData} />}
+                            {/* {userData && <UserAccountTab userData={userData} setUserData={setUserData} />} */}
                         </TabsContent>
 
                         {/* Tab Privacidad */}
@@ -93,12 +93,12 @@ export default function ConfiguracionPage() {
 
                         {/* Tab Perfil Empresarial */}
                         <TabsContent value="perfil" className="space-y-6">
-                            {companyData && <CompanyProfileTab companyData={companyData} setCompanyData={setCompanyData} />}
+                            {/* {companyData && <CompanyProfileTab companyData={companyData} setCompanyData={setCompanyData} />} */}
                         </TabsContent>
 
                         {/* Tab Cuenta */}
                         <TabsContent value="cuenta" className="space-y-6">
-                            {companyData && <CompanyAccountTab companyData={companyData} setCompanyData={setCompanyData} />}
+                            {/* {companyData && <CompanyAccountTab companyData={companyData} setCompanyData={setCompanyData} />} */}
                         </TabsContent>
 
                         {/* Tab Facturación */}

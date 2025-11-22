@@ -18,16 +18,16 @@ export function UserTypeSelector({ userType, setUserType }: UserTypeSelectorProp
       <CardContent>
         <div className="flex gap-4">
           <Button
-            variant={userType === 'normal' ? 'default' : 'outline'}
-            onClick={() => setUserType('normal')}
+            variant={userType === 'user' ? 'default' : 'outline'}
+            onClick={() => setUserType('user')}
             className="flex-1"
           >
             <User className="w-4 h-4 mr-2" />
             Usuario
           </Button>
           <Button
-            variant={userType === 'empresa' ? 'default' : 'outline'}
-            onClick={() => setUserType('empresa')}
+            variant={userType === 'company' ? 'default' : 'outline'}
+            onClick={() => setUserType('company')}
             className="flex-1"
           >
             <Building2 className="w-4 h-4 mr-2" />

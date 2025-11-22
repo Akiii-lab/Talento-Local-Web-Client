@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BuisnessMetrics } from "@/types/metrics/metrics";
 import { BriefcaseBusinessIcon, SearchIcon } from "lucide-react";
 import Image from "next/image";
@@ -53,23 +54,40 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                {/* Sección de estadísticas */}
                 <div className="flex flex-col md:flex-row gap-6 mt-10 w-full max-w-4xl justify-center items-center">
-                    <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60">
-                        <span className="text-3xl font-bold text-blue-600">+{buisnessStats?.jobsPosted}</span>
-                        <span className="text-gray-700 mt-2">Empleos publicados</span>
-                    </div>
-                    <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60">
-                        <span className="text-3xl font-bold text-green-600">+{buisnessStats?.activeCompanies}</span>
-                        <span className="text-gray-700 mt-2">Empresas activas</span>
-                    </div>
-                    <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60">
-                        <span className="text-3xl font-bold text-purple-600">+{buisnessStats?.registeredUsers}</span>
-                        <span className="text-gray-700 mt-2">Usuarios registrados</span>
-                    </div>
+                    {buisnessStats ? (
+                        <>
+                            <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60">
+                                <span className="text-3xl font-bold text-blue-600">+{buisnessStats?.jobsPosted}</span>
+                                <span className="text-gray-700 mt-2">Empleos publicados</span>
+                            </div>
+                            <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60">
+                                <span className="text-3xl font-bold text-green-600">+{buisnessStats?.activeCompanies}</span>
+                                <span className="text-gray-700 mt-2">Empresas activas</span>
+                            </div>
+                            <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60">
+                                <span className="text-3xl font-bold text-purple-600">+{buisnessStats?.registeredUsers}</span>
+                                <span className="text-gray-700 mt-2">Usuarios registrados</span>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60 gap-3">
+                                <Skeleton className="h-8 w-20" />
+                                <Skeleton className="h-4 w-32" />
+                            </div>
+                            <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60 gap-3">
+                                <Skeleton className="h-8 w-20" />
+                                <Skeleton className="h-4 w-32" />
+                            </div>
+                            <div className="bg-white/80 rounded-lg shadow-md p-6 flex flex-col items-center w-60 gap-3">
+                                <Skeleton className="h-8 w-20" />
+                                <Skeleton className="h-4 w-32" />
+                            </div>
+                        </>
+                    )}
                 </div>
 
-                {/* Botones de acción */}
                 <div className="flex flex-col md:flex-row gap-4 mt-10 w-full max-w-2xl justify-center items-center">
                     <Button className="w-full md:w-auto bg-blue-500 text-white font-semibold px-8 py-3 rounded-lg shadow hover:bg-blue-600 transition"
                         onClick={() => router.push("/signup")}
@@ -83,7 +101,6 @@ export default function HomePage() {
                     </Button>
                 </div>
 
-                {/* Mensaje motivacional */}
                 <div className="mt-12 text-center max-w-2xl mx-auto">
                     <h2 className="text-3xl font-bold mb-2 text-gray-800">Encuentra tu próximo desafío profesional</h2>
                     <p className="text-lg text-gray-600">Explora miles de oportunidades laborales, conecta con empresas líderes y haz crecer tu carrera. ¡Tu futuro comienza aquí!</p>

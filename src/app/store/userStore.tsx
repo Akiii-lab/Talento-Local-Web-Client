@@ -1,10 +1,10 @@
-import { CompanyData, UserData } from '@/types/user/user.types';
+import { CompanyData, UserData, UserDataSimplified } from '@/types/user/user.types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface UserStore {
-	user: UserData | null ;
-	setUser: (value: UserData | null ) => void;
+	user: UserDataSimplified | null ;
+	setUser: (value: UserDataSimplified | null ) => void;
 	clearUser: () => void;
 }
 
@@ -23,8 +23,8 @@ export const useUserStore = create<UserStore>()(
 );
 
 interface CompanyStore {
-	company: CompanyData | null;
-	setCompany: (value: CompanyData | null) => void;
+	company: UserDataSimplified | null;
+	setCompany: (value: UserDataSimplified | null) => void;
 	clearCompany: () => void;
 }
 
