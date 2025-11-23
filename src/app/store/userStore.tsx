@@ -1,4 +1,4 @@
-import { CompanyData, UserData, UserDataSimplified } from '@/types/user/user.types';
+import { UserDataSimplified } from '@/types/user/user.types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 

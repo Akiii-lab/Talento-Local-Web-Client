@@ -25,6 +25,7 @@ export default function Header() {
     const { user, clearUser } = useUserStore();
     const { company, clearCompany } = useCompanyStore();
     const loggedUser: UserDataSimplified | UserDataSimplified | null = user || company || null;
+    console.log("Logged User in Header:", loggedUser);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
 

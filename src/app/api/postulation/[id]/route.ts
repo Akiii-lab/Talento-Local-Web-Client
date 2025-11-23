@@ -16,11 +16,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                 'Content-Type': 'application/json',
             }
         });
-
-        if (response.status === 400) {
-            return new NextResponse(JSON.stringify({ postulations: [], message: "No postulations found for this user", ok: false }), { status: 200 });
-        }
-
+        console.log(response)
         console.log("Fetching postulations for user ID:", userId);
         if (response.status !== 200) {
             return new NextResponse(JSON.stringify({ postulations: [], error: "Error fetching postulations", ok: false }), { status: response.status });

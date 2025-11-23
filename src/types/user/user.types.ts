@@ -26,6 +26,7 @@ export interface UserDataSimplified {
   name: string;
   email: string;
   type: UserType;
+  address: string;
 }
 
-export type UserType = 'user' | 'company' | null;
+export type UserType = 'applicant' | 'institution' | 'company' | null;
