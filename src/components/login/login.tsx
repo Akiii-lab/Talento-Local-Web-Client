@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useCompanyStore, useUserStore } from '@/app/store/userStore';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader } from 'lucide-react';
 
 export const LoginComponent = () => {
   const router = useRouter();
@@ -17,9 +17,11 @@ export const LoginComponent = () => {
   const { setUser } = useUserStore();
   const { setCompany } = useCompanyStore();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     try {
+      setLoading(true);
       const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
@@ -32,21 +34,32 @@ export const LoginComponent = () => {
     });
 
     const data = await res.json();
+    const user = data.user.user;
     if(!res.ok) {
       throw new Error();
     }
-    if (data.type === "company") {
-      setCompany(data.user);
+    if (user.type === "company") {
+      setCompany(user);
     }
     else {
-      setUser(data.user);
+      setUser(user);
     }
+    toast.success("Inicio de sesión exitoso");
     router.push("/home");
   } catch (error) {
     toast("Error al iniciar sesión. Verifica tus credenciales.");
+  } finally {
+    setLoading(false);
   }
 }
 
+  if(loading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen w-full">
+        <Loader className="animate-spin" />
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col border shadow-2xl rounded-lg p-8 gap-4 w-sm">

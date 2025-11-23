@@ -21,6 +21,7 @@ export function JobDetailPanel({ job, postuledJob }: JobDetailPanelProps) {
   const { user } = useUserStore();
   const { company } = useCompanyStore();
   const [isApplied, setIsApplied] = useState(postuledJob?.applyed || false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setIsApplied(postuledJob?.applyed || false);
@@ -31,11 +32,27 @@ export function JobDetailPanel({ job, postuledJob }: JobDetailPanelProps) {
       toast("Debes iniciar sesión como usuario para postularte a un empleo.");
       return;
     }
-    if(postuledJob) {
-      postuledJob.applyed = true;
-      postuledJob.statusId = "Pendiente";
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/postulation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          UserId: user.id,
+          OfferId: job.id,
+        }),
+      });
+      if(!response.ok) {
+        throw new Error();
+      }
       setIsApplied(true);
-      toast("¡Postulación enviada correctamente!");
+      toast.success("Postulación realizada con éxito.");
+    } catch (error) {
+      toast.error("Error al postularse al empleo.");
+    } finally {
+      setLoading(false);
     }
   }
 

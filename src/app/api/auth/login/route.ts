@@ -4,15 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
     const { email, password } = await request.json();
     const api = GetProfilesClient();
-    // Mocked response for testing purposes
-    const mockedUser = {
-        id: "ffd275b4-3c8e-4e2b-9c6d-1a2b3c4d5e6f",
-        name: "Mocked User",
-        email: "V0CwI@example.com",
-        type: "user"
-    }
-    return new NextResponse(JSON.stringify({ user: mockedUser, type: "user", ok: true }), { status: 200 });
-
     const response = await fetch(`${api}/auth/login`, {
         method: "POST",
         headers: {
@@ -22,7 +13,10 @@ export async function POST(request: NextRequest) {
     });
     if (response.status === 200) {
         const data = await response.json();
-        return new NextResponse(JSON.stringify({ ...data, ok: true }), { status: 200 });
+        const token = data.token;
+        const nextresponse = new NextResponse(JSON.stringify({ user: data, ok: true }), { status: 200 })
+        nextresponse.cookies.set("token", token, { httpOnly: true, path: '/' });
+        return nextresponse;
     }
     if (response.status === 401) {
         return new NextResponse(JSON.stringify({ error: "Credenciales incorrectas", ok: false }), { status: 401 });

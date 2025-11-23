@@ -18,8 +18,8 @@ export function UserTypeSelector({ userType, setUserType }: UserTypeSelectorProp
       <CardContent>
         <div className="flex gap-4">
           <Button
-            variant={userType === 'user' ? 'default' : 'outline'}
-            onClick={() => setUserType('user')}
+            variant={userType === 'applicant' ? 'default' : 'outline'}
+            onClick={() => setUserType('applicant')}
             className="flex-1"
           >
             <User className="w-4 h-4 mr-2" />

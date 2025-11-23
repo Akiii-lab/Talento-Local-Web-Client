@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Loader, Eye, EyeOff } from "lucide-react";
+import { UserType } from "@/types/user/user.types";
 
 
 export const SignupComponent = () => {
@@ -18,7 +19,7 @@ export const SignupComponent = () => {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [userType, setUserType] = useState<"user" | "company">("user");
+    const [userType, setUserType] = useState<UserType>("applicant");
 
     const validateForm = (): boolean => {
         const { username, email, password, confirmPassword, address } = singupform.getValues();
@@ -52,7 +53,7 @@ export const SignupComponent = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    username,
+                    name: username,
                     email,
                     password,
                     address,
@@ -191,12 +192,12 @@ export const SignupComponent = () => {
                                 <div className="flex flex-col gap-1">
                                     <FormLabel>Tipo de Cuenta</FormLabel>
                                     <span className="text-sm text-gray-500">
-                                        {userType === "user" ? "Candidato" : "Empresa"}
+                                        {userType === "applicant" ? "Candidato" : "Empresa"}
                                     </span>
                                 </div>
                                 <Switch
                                     checked={userType === "company"}
-                                    onCheckedChange={(checked) => setUserType(checked ? "company" : "user")}
+                                    onCheckedChange={(checked) => setUserType(checked ? "company" : "applicant")}
                                 />
                             </div>
                         </FormItem>
