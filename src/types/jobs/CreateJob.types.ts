@@ -1,17 +1,24 @@
 export interface CreateJobFormData {
     title: string;
-    subtitle: string;
+    subTitle: string;
     company: string;
-    location: string;
-    type: string;
-    schedule: string;
-    modality: "Presencial" | "Remoto" | "Hibrido" | "";
-    salary: string;
-    payType: "Mensual" | "Semanal" | "Quincenal" | "";
-    category: "tecnologia" | "ventas" | "admin" | "servicios" | "";
-    experience: string;
-    jornada: "completo" | "parcial" | "flexible" | "";
     description: string;
-    requirements: string;
+    modality: "Presencial" | "Remoto" | "Hibrido" | "";
+    salary: number;
+    requeriments: string;
     benefits: string;
+    yearsExperience: number;
+    location: string;
+    journey: "completo" | "parcial" | "flexible" | "";
+    schedule: string;
+    availablePlaces: number;
+    status: 'activo' | 'inactivo' | '';
+    contractType: string;
+    paymentType: "Mensual" | "Semanal" | "Quincenal" | "";
+    publicationDate: string;
+    closingDate: string;
+    companyId: string;
+    categoryId: number;
 }
+
+export type categories = "tecnologia" | "ventas" | "admin" | "servicios" | "";

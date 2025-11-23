@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Briefcase, MapPin, DollarSign, Clock, Users, FileText, Building2 } from "lucide-react";
+import { Briefcase, MapPin, DollarSign, Clock, Users, FileText, Building2, Calendar, Loader } from "lucide-react";
 import { CreateJobFormData } from "@/types/jobs/CreateJob.types";
 import { useCompanyStore } from "@/app/store/userStore";
 import { useRouter } from "next/navigation";
@@ -22,29 +22,83 @@ import { toast } from "sonner";
 export default function CreateJobPage() {
     const { company } = useCompanyStore();
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<CreateJobFormData>({
         title: "",
-        subtitle: "",
-        company: "",
+        subTitle: "",
+        company: company?.name || "",
         location: "Santa Marta, Magdalena",
-        type: "",
+        contractType: "",
         schedule: "",
         modality: "",
-        salary: "",
-        payType: "",
-        category: "",
-        experience: "",
-        jornada: "",
+        salary: 0,
+        paymentType: "",
+        categoryId: 0,
+        yearsExperience: 0,
+        journey: "",
         description: "",
-        requirements: "",
+        requeriments: "",
         benefits: "",
+        availablePlaces: 1,
+        status: 'activo',
+        publicationDate: new Date().toISOString().split('T')[0],
+        closingDate: "",
+        companyId: company?.id || "",
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Datos del formulario:", formData);
-        // Aquí iría la lógica para enviar los datos al backend
-        alert("Oferta de empleo creada exitosamente!");
+        try {
+            setLoading(true);
+            
+            // Convertir datos al formato esperado por el backend
+            const dataToSend = {
+                title: formData.title,
+                subTitle: formData.subTitle,
+                description: formData.description,
+                modality: formData.modality,
+                salary: Number(formData.salary),
+                requeriments: formData.requeriments,
+                benefits: formData.benefits,
+                yearsExperience: Number(formData.yearsExperience),
+                location: formData.location,
+                journey: formData.journey,
+                schedule: formData.schedule,
+                availablePlaces: Number(formData.availablePlaces),
+                status: formData.status,
+                contractType: formData.contractType,
+                paymentType: formData.paymentType,
+                publicationDate: new Date(formData.publicationDate).toISOString(),
+                closingDate: new Date(formData.closingDate).toISOString(),
+                companyId: formData.companyId,
+                categoryId: Number(formData.categoryId),
+            };
+            
+            const response = await fetch('/api/jobs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ offer: dataToSend }),
+            });
+            if(response.status === 400) {
+                toast.error("Error al crear la oferta. Posibles datos incompletos.");
+                return;
+            }
+            if(response.ok) {
+                toast.success("Oferta creada con éxito.");
+                router.push("/jobs/my-jobs");
+                return;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            console.error("Error al crear la oferta:", error);
+            toast.error("Error al crear la oferta.");
+        }
+        finally {
+            setLoading(false);
+        }
     };
 
     const handleChange = (field: string, value: string) => {
@@ -54,6 +108,14 @@ export default function CreateJobPage() {
     if(!company) {
         toast("Debes iniciar sesión como empresa para crear una oferta de empleo.");
         router.push("/");
+    }
+
+    if(loading) {
+        return (
+            <div className="flex flex-col justify-center items-center h-screen w-full">
+                <Loader className="animate-spin" />
+            </div>
+        )
     }
 
     return (
@@ -93,12 +155,12 @@ export default function CreateJobPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="subtitle">Subtítulo (opcional)</Label>
+                                    <Label htmlFor="subTitle">Subtítulo (opcional)</Label>
                                     <Input
-                                        id="subtitle"
+                                        id="subTitle"
                                         placeholder="Ej: React + Node.js"
-                                        value={formData.subtitle}
-                                        onChange={(e) => handleChange("subtitle", e.target.value)}
+                                        value={formData.subTitle}
+                                        onChange={(e) => handleChange("subTitle", e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -115,6 +177,7 @@ export default function CreateJobPage() {
                                         value={formData.company}
                                         onChange={(e) => handleChange("company", e.target.value)}
                                         required
+                                        disabled
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -133,20 +196,28 @@ export default function CreateJobPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="category">Categoría *</Label>
+                                <Label htmlFor="categoryId">Categoría *</Label>
                                 <Select
-                                    value={formData.category}
-                                    onValueChange={(value) => handleChange("category", value)}
+                                    value={formData.categoryId.toString()}
+                                    onValueChange={(value) => handleChange("categoryId", value)}
                                     required
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Selecciona una categoría" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="tecnologia">Tecnología</SelectItem>
-                                        <SelectItem value="ventas">Ventas</SelectItem>
-                                        <SelectItem value="admin">Administración</SelectItem>
-                                        <SelectItem value="servicios">Servicios</SelectItem>
+                                        <SelectItem value="1">Temporal</SelectItem>
+                                        <SelectItem value="2">Medio tiempo</SelectItem>
+                                        <SelectItem value="3">Tecnología</SelectItem>
+                                        <SelectItem value="4">Administración</SelectItem>
+                                        <SelectItem value="5">Salud</SelectItem>
+                                        <SelectItem value="6">Educación</SelectItem>
+                                        <SelectItem value="7">Marketing y Comunicación</SelectItem>
+                                        <SelectItem value="8">Ingeniería</SelectItem>
+                                        <SelectItem value="9">Ciencias Ambientales</SelectItem>
+                                        <SelectItem value="10">Turismo y Hotelería</SelectItem>
+                                        <SelectItem value="11">Logística y Operaciones</SelectItem>
+                                        <SelectItem value="12">Arte y Cultura</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -164,10 +235,10 @@ export default function CreateJobPage() {
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="type">Tipo de contrato *</Label>
+                                    <Label htmlFor="contractType">Tipo de contrato *</Label>
                                     <Select
-                                        value={formData.type}
-                                        onValueChange={(value) => handleChange("type", value)}
+                                        value={formData.contractType}
+                                        onValueChange={(value) => handleChange("contractType", value)}
                                         required
                                     >
                                         <SelectTrigger>
@@ -187,7 +258,7 @@ export default function CreateJobPage() {
                                     <Label htmlFor="schedule">Horario *</Label>
                                     <Input
                                         id="schedule"
-                                        placeholder="Ej: Tiempo Completo"
+                                        placeholder="Ej: Lunes a Viernes 8am - 5pm"
                                         value={formData.schedule}
                                         onChange={(e) => handleChange("schedule", e.target.value)}
                                         required
@@ -215,44 +286,38 @@ export default function CreateJobPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="jornada">Jornada *</Label>
+                                    <Label htmlFor="journey">Jornada *</Label>
                                     <Select
-                                        value={formData.jornada}
-                                        onValueChange={(value) => handleChange("jornada", value)}
+                                        value={formData.journey}
+                                        onValueChange={(value) => handleChange("journey", value)}
                                         required
                                     >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Selecciona la jornada" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="completo">Tiempo completo</SelectItem>
-                                            <SelectItem value="parcial">Medio tiempo</SelectItem>
-                                            <SelectItem value="flexible">Flexible</SelectItem>
+                                            <SelectItem value="Tiempo completo">Tiempo completo</SelectItem>
+                                            <SelectItem value="Medio tiempo">Medio tiempo</SelectItem>
+                                            <SelectItem value="Flexible">Flexible</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="experience" className="flex items-center gap-2">
+                                <Label htmlFor="yearsExperience" className="flex items-center gap-2">
                                     <Users className="w-4 h-4" />
-                                    Experiencia requerida *
+                                    Experiencia requerida (años) *
                                 </Label>
-                                <Select
-                                    value={formData.experience}
-                                    onValueChange={(value) => handleChange("experience", value)}
+                                <Input
+                                    id="yearsExperience"
+                                    type="number"
+                                    placeholder="Ej: 3"
+                                    min="0"
+                                    value={formData.yearsExperience}
+                                    onChange={(e) => handleChange("yearsExperience", e.target.value)}
                                     required
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Años de experiencia" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="0">Sin experiencia</SelectItem>
-                                        <SelectItem value="1">1 año</SelectItem>
-                                        <SelectItem value="2">2 años</SelectItem>
-                                        <SelectItem value="3">3+ años</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                />
                             </div>
                         </CardContent>
                     </Card>
@@ -266,7 +331,7 @@ export default function CreateJobPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="salary">Salario *</Label>
                                     <Input
@@ -280,10 +345,10 @@ export default function CreateJobPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="payType">Tipo de pago *</Label>
+                                    <Label htmlFor="paymentType">Tipo de pago *</Label>
                                     <Select
-                                        value={formData.payType}
-                                        onValueChange={(value) => handleChange("payType", value)}
+                                        value={formData.paymentType}
+                                        onValueChange={(value) => handleChange("paymentType", value)}
                                         required
                                     >
                                         <SelectTrigger>
@@ -296,7 +361,56 @@ export default function CreateJobPage() {
                                         </SelectContent>
                                     </Select>
                                 </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="availablePlaces">Vacantes disponibles *</Label>
+                                    <Input
+                                        id="availablePlaces"
+                                        type="number"
+                                        placeholder="Ej: 3"
+                                        min="1"
+                                        value={formData.availablePlaces}
+                                        onChange={(e) => handleChange("availablePlaces", e.target.value)}
+                                        required
+                                    />
+                                </div>
                             </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Vigencia de la Convocatoria */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Calendar className="w-5 h-5" />
+                                Vigencia de la Convocatoria
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="closingDate">Fecha de Cierre *</Label>
+                                <Input
+                                    id="closingDate"
+                                    type="date"
+                                    value={formData.closingDate}
+                                    onChange={(e) => handleChange("closingDate", e.target.value)}
+                                    min={formData.publicationDate}
+                                    required
+                                />
+                                <p className="text-xs text-gray-500">Selecciona hasta cuándo estará abierta la convocatoria</p>
+                            </div>
+
+                            {formData.closingDate && (
+                                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                                    <p className="text-sm text-blue-800">
+                                        <span className="font-semibold">Convocatoria activa por:</span> {
+                                            Math.ceil(
+                                                (new Date(formData.closingDate).getTime() - new Date(formData.publicationDate).getTime()) / (1000 * 60 * 60 * 24)
+                                            )
+                                        } días
+                                    </p>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
@@ -322,12 +436,12 @@ export default function CreateJobPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="requirements">Requisitos *</Label>
+                                <Label htmlFor="requeriments">Requisitos *</Label>
                                 <Textarea
-                                    id="requirements"
+                                    id="requeriments"
                                     placeholder="Lista los requisitos y habilidades necesarias para el puesto..."
-                                    value={formData.requirements}
-                                    onChange={(e) => handleChange("requirements", e.target.value)}
+                                    value={formData.requeriments}
+                                    onChange={(e) => handleChange("requeriments", e.target.value)}
                                     rows={5}
                                     required
                                 />
