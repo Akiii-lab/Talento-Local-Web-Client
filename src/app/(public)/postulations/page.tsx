@@ -57,9 +57,10 @@ export default function PostulationsPage() {
             const response = await fetch(`/api/postulation/${userId}`, {
                 method: "GET",
             });
+            console.log("Response status fetching postuled jobs:", response.status);
             const data = await response.json();
             setPostuledJobs(data.postulations || []);
-            if (!data.ok) {
+            if (!response.ok) {
                 throw new Error();
             }
         } catch (error) {
