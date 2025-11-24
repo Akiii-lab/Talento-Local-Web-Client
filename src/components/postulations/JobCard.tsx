@@ -6,7 +6,6 @@ import { Heart, MapPin, Calendar, Briefcase, Clock, DollarSign } from "lucide-re
 import { useState } from "react";
 
 export function JobCard({ job, onClick, className }: JobCardProps) {
-  const [favorited, setFavorited] = useState(false);
   
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -38,20 +37,6 @@ export function JobCard({ job, onClick, className }: JobCardProps) {
             </Badge>
           )}
         </div>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="h-8 w-8 hover:bg-red-50"
-          onClick={(e) => {
-            e.stopPropagation();
-            setFavorited(!favorited);
-          }}
-        >
-          <Heart 
-            size={18} 
-            className={`transition-colors ${favorited ? "fill-red-500 text-red-500" : "text-gray-400 hover:text-red-500"}`} 
-          />
-        </Button>
       </div>
 
       <div className="mb-3">

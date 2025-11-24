@@ -17,15 +17,26 @@ import {
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 
-export function JobDetailPanel({ job, postuledJob }: JobDetailPanelProps) {
+export function JobDetailPanel({ job, postuledJob, handlefavorite }: JobDetailPanelProps) {
   const { user } = useUserStore();
   const { company } = useCompanyStore();
   const [isApplied, setIsApplied] = useState(postuledJob?.applyed || false);
   const [loading, setLoading] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     setIsApplied(postuledJob?.applyed || false);
   }, [postuledJob?.applyed]);
+
+  const handleFavoriteClick = async () => {
+    try {
+      await handlefavorite(job.id);
+      setIsFavorite(!isFavorite);
+      toast.success(isFavorite ? "Removido de favoritos" : "Agregado a favoritos");
+    } catch (error) {
+      toast.error("Error al cambiar favorito");
+    }
+  };
 
   const handleApply = async() => {
     if(!user || company) {
@@ -34,20 +45,20 @@ export function JobDetailPanel({ job, postuledJob }: JobDetailPanelProps) {
     }
     try {
       setLoading(true);
+      
+      const formData = new FormData();
+      formData.append('UserId', user.id);
+      formData.append('OfferId', job.id.toString());
+      formData.append('StatusId', '3');
+      
       const response = await fetch(`/api/postulation`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          UserId: user.id,
-          OfferId: job.id,
-        }),
+        body: formData,
       });
       if(!response.ok) {
         throw new Error();
       }
-      setIsApplied(true);
+      /* setIsApplied(true); */
       toast.success("Postulación realizada con éxito.");
     } catch (error) {
       toast.error("Error al postularse al empleo.");
@@ -87,8 +98,13 @@ export function JobDetailPanel({ job, postuledJob }: JobDetailPanelProps) {
           className={`flex-1 ${isApplied ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}>
           {isApplied ? "Ya estás postulado" : "Aplicar"}
         </Button>
-        <Button variant="outline" size="icon">
-          <HeartIcon size={20} />
+        <Button 
+          variant="outline" 
+          size="icon" 
+          onClick={handleFavoriteClick}
+          className={isFavorite ? "text-red-600 border-red-600 hover:bg-red-50" : ""}
+        >
+          <HeartIcon size={20} fill={isFavorite ? "currentColor" : "none"} />
         </Button>
         <Button variant="outline" size="icon">
           <ShareIcon size={20} />
