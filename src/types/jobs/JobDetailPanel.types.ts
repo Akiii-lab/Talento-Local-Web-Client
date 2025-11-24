@@ -24,10 +24,7 @@ export interface JobDetailPanelType {
 export interface JobDetailPanelProps {
     job: JobDetailPanelType;
     postuledJob? : PostuledJobs;
-}
-
-export interface JobDetailPanelProps {
-    job: JobDetailPanelType;
+    handlefavorite: (jobId: number) => void;
 }
 
 export interface PostuledJobs {

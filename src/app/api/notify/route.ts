@@ -1,7 +1,7 @@
 import { GetNotificationsClient } from "@/utils/clients";
 import { NextRequest, NextResponse } from "next/server";
 
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos en ms
+const CACHE_DURATION = 5 * 60 * 1000; // 5 horas en ms
 let cachedNotifications: { [key: string]: { data: any; timestamp: number } } = {};
 
 export async function POST(req: NextRequest) {
@@ -26,9 +26,8 @@ export async function POST(req: NextRequest) {
     }
 
     const api = GetNotificationsClient();
-    /* ${api}/notificaciones/${userid}/${userType}/all */
     try {
-        const response = await fetch(`${api}/notificaciones`, {
+        const response = await fetch(`${api}/notificaciones/${userid}/${userType}/all`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -112,10 +111,10 @@ export async function DELETE(req: NextRequest) {
                 "Content-Type": "application/json",
             },
         });
-        if (response.status !== 200) {
-            throw new Error("Error al eliminar la notificación");
+        if (response.status === 200 || response.status === 204) {
+            return new NextResponse(JSON.stringify({ ok: true }), { status: 200 });
         }
-        return new NextResponse(JSON.stringify({ ok: true }), { status: 200 });
+        throw new Error("Error al eliminar la notificación");
     } catch (error) {
         console.error("Error al eliminar la notificación:", error);
         return new NextResponse("Error al eliminar la notificación", { status: 500 });

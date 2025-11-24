@@ -7,12 +7,13 @@ import { FilterBar } from "@/components/postulations/FilterBar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { JobDetailPanelType, PostuledJobs } from "@/types/jobs/JobDetailPanel.types";
-import { useUserStore } from "@/app/store/userStore";
+import { useCompanyStore, useUserStore } from "@/app/store/userStore";
 import { toast } from "sonner";
 
 
 export default function PostulationsPage() {
     const { user } = useUserStore();
+    const { company } = useCompanyStore();
     const [jobs, setJobs] = useState<JobDetailPanelType[]>([]);
     const [loading, setLoading] = useState(true);
     const [postuledJobs, setPostuledJobs] = useState<PostuledJobs[]>([]);
@@ -31,7 +32,15 @@ export default function PostulationsPage() {
     const fetchJobs = async () => {
         try {
             setLoading(true);
-            const response = await fetch("/api/offers");
+            const userid = user ? user.id : company ? company.id : null;
+            const response = await fetch("/api/offers", {
+                method: "POST",
+                body: JSON.stringify({ userid }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
             const data = await response.json();
             if (!data.ok) {
                 throw new Error();
@@ -43,7 +52,6 @@ export default function PostulationsPage() {
             }
         } catch (error) {
             console.error("Error fetching jobs:", error);
-            toast.error("Error cargando ofertas");
             setJobs([]);
         } finally {
             setLoading(false);
@@ -69,11 +77,12 @@ export default function PostulationsPage() {
         }
     };
 
-    useEffect(() => {
-        fetchJobs();
-    }, []);
+    const handlefavorite = async (jobId: number) => {
+
+    }
 
     useEffect(() => {
+        fetchJobs();
         if (user) {
             fetchPostuledJobs();
         }
@@ -244,7 +253,12 @@ export default function PostulationsPage() {
                             </div>
                         ) : (
                             <>
-                                {selectedJob && <JobDetailPanel job={selectedJob} postuledJob={postuledJobs.find(p => p.offerId === selectedJob.id)} />}
+                                {selectedJob && <JobDetailPanel 
+                                job={selectedJob} 
+                                postuledJob={postuledJobs.find(p => p.offerId === selectedJob.id)} 
+                                handlefavorite={handlefavorite}
+                                />
+                                }
                                 <div className="flex gap-2 justify-center mt-4">
                                     <Button
                                         onClick={handlePreviousPage}

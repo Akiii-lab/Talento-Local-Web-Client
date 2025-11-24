@@ -5,11 +5,12 @@ import { useCompanyStore } from "@/app/store/userStore";
 import { JobDetailPanelType } from "@/types/jobs/JobDetailPanel.types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, DollarSign, Briefcase, Calendar, Clock, Eye, Edit, Trash2 } from "lucide-react";
+import { MapPin, DollarSign, Briefcase, Calendar, Clock, Eye, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { JobMetricsDialog } from "@/components/jobs/JobMetricsDialog";
+import { ComingSoonDialog } from "@/components/ComingSoonDialog";
 
 export default function MyJobsPage() {
     const { company } = useCompanyStore();
@@ -17,7 +18,15 @@ export default function MyJobsPage() {
     const [loading, setLoading] = useState(true);
     const [selectedJob, setSelectedJob] = useState<JobDetailPanelType | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [showComingSoon, setShowComingSoon] = useState(false);
     const router = useRouter();
+    
+    const itemsPerPage = 9;
+    const totalPages = Math.ceil(jobs.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentJobs = jobs.slice(startIndex, endIndex);
 
     const fetchCompanyJobs = async () => {
         if (!company) return;
@@ -25,15 +34,19 @@ export default function MyJobsPage() {
             setLoading(true);
             const companyId = company.id;
 
-            // Fetch all jobs
-            const jobsResponse = await fetch("/api/offers");
-            const allJobs: JobDetailPanelType[] = await jobsResponse.json();
+            const jobsResponse = await fetch(`/api/jobs/${companyId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+            if(!jobsResponse.ok) {
+                throw new Error("Error al obtener las convocatorias");
+            }
 
-            //TODO: fix this when userid and companyid are switched to string in api
-            // Filter jobs to only show those posted by this company
-            /* const companyJobs = allJobs.filter(job => job.companyId === companyId); */
-
-            /* setJobs(companyJobs); */
+            const data = await jobsResponse.json();
+            const allJobs: JobDetailPanelType[] = data.jobs;
+            setJobs(allJobs);
         } catch (error) {
             console.error("Error cargando convocatorias:", error);
             toast.error("Error al cargar las convocatorias");
@@ -96,7 +109,6 @@ export default function MyJobsPage() {
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4">
             <div className="max-w-6xl mx-auto">
-                {/* Header */}
                 <div className="mb-8 flex justify-between items-center">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -113,7 +125,6 @@ export default function MyJobsPage() {
                     </Link>
                 </div>
 
-                {/* Empty State */}
                 {jobs.length === 0 ? (
                     <Card className="text-center py-12">
                         <CardContent>
@@ -132,14 +143,13 @@ export default function MyJobsPage() {
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {jobs.map((job) => {
-                            const postedDate = job.publicationDate ? new Date(job.publicationDate).toLocaleDateString('es-ES') : 'N/A';
-                            const closingDate = job.closingDate ? new Date(job.closingDate).toLocaleDateString('es-ES') : 'Sin fecha límite';
-
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {currentJobs.map((job) => {
+                                const postedDate = job.publicationDate ? new Date(job.publicationDate).toLocaleDateString('es-ES') : 'N/A';
+                                const closingDate = job.closingDate ? new Date(job.closingDate).toLocaleDateString('es-ES') : 'Sin fecha límite';
                             return (
                                 <Card key={job.id} className="hover:shadow-lg transition-shadow overflow-hidden">
-                                    {/* Header con estado */}
                                     <div className={`p-4 border-b ${job.status === "Urgente" ? "bg-red-50" : "bg-blue-50"}`}>
                                         <div className="flex justify-between items-start mb-2">
                                             <div className="flex-1">
@@ -151,41 +161,28 @@ export default function MyJobsPage() {
                                             </span>
                                         </div>
                                     </div>
-
                                     <CardContent className="p-4 space-y-4">
-                                        {/* Descripción */}
                                         <p className="text-sm text-gray-600 line-clamp-3">
                                             {job.description}
                                         </p>
-
-                                        {/* Info Grid */}
                                         <div className="grid grid-cols-2 gap-3 text-sm">
-                                            {/* Ubicación */}
                                             <div className="flex items-center gap-2 text-gray-700">
                                                 <MapPin size={16} className="text-blue-600 shrink-0" />
                                                 <span className="truncate">{job.location}</span>
                                             </div>
-
-                                            {/* Salario */}
                                             <div className="flex items-center gap-2 text-gray-700">
                                                 <DollarSign size={16} className="text-green-600 shrink-0" />
                                                 <span className="truncate">${job.salary.toLocaleString()}</span>
                                             </div>
-
-                                            {/* Modalidad */}
                                             <div className="flex items-center gap-2 text-gray-700">
                                                 <Briefcase size={16} className="text-purple-600 shrink-0" />
                                                 <span className="truncate">{job.modality}</span>
                                             </div>
-
-                                            {/* Vacantes */}
                                             <div className="flex items-center gap-2 text-gray-700">
                                                 <Eye size={16} className="text-orange-600 shrink-0" />
                                                 <span className="truncate">{job.availablePlaces} vacante(s)</span>
                                             </div>
                                         </div>
-
-                                        {/* Fechas */}
                                         <div className="space-y-2 pt-2 border-t">
                                             <div className="flex items-center gap-2 text-sm text-gray-500">
                                                 <Calendar size={16} />
@@ -196,25 +193,23 @@ export default function MyJobsPage() {
                                                 <span>Cierra: {closingDate}</span>
                                             </div>
                                         </div>
-
-                                        {/* Botones de acción */}
                                         <div className="flex gap-2 pt-4">
                                             <Button
                                                 variant="outline"
                                                 size="sm"
                                                 onClick={() => handleOpenMetrics(job)}
-                                                className="flex-1"
+                                                className="flex-1 hover:cursor-pointer"
                                             >
                                                 <Eye size={16} className="mr-2" />
                                                 Ver
                                             </Button>
-                                            <Button variant="outline" className="flex-1" size="sm">
+                                            <Button variant="outline" className="flex-1 hover:cursor-pointer" size="sm" onClick={() => setShowComingSoon(true)}>
                                                 <Edit size={16} className="mr-2" />
                                                 Editar
                                             </Button>
                                             <Button
                                                 variant="ghost"
-                                                className="flex-1 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                                className="flex-1 text-red-600 hover:cursor-pointer hover:bg-red-50 hover:text-red-700"
                                                 size="sm"
                                                 onClick={() => handleDeleteJob(job.id)}
                                             >
@@ -226,15 +221,60 @@ export default function MyJobsPage() {
                                 </Card>
                             );
                         })}
-                    </div>
+                        </div>
+
+                        {totalPages > 1 && (
+                            <div className="mt-8 flex justify-center items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                    className="hover:cursor-pointer"
+                                >
+                                    <ChevronLeft size={16} className="mr-2" />
+                                    Anterior
+                                </Button>
+
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                        <Button
+                                            key={page}
+                                            variant={currentPage === page ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(page)}
+                                            className="w-10 hover:cursor-pointer"
+                                        >
+                                            {page}
+                                        </Button>
+                                    ))}
+                                </div>
+
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="hover:cursor-pointer"
+                                >
+                                    Siguiente
+                                    <ChevronRight size={16} className="ml-2" />
+                                </Button>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
 
-            {/* Dialog de Métricas */}
             <JobMetricsDialog
                 isOpen={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 job={selectedJob}
+            />
+
+            <ComingSoonDialog
+                isOpen={showComingSoon}
+                onClose={() => setShowComingSoon(false)}
             />
         </div>
     );

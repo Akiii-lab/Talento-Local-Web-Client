@@ -23,24 +23,25 @@ export default function PostuledPage() {
         try {
             setLoading(true);
             const userId = user.id;
-
-            // Fetch all jobs
-            const jobsResponse = await fetch("/api/offers");
-            const allJobs: JobDetailPanelType[] = await jobsResponse.json();
-
-            // Fetch user's postulations
+            const jobsResponse = await fetch("/api/offers", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+            const allJobsResponse = await jobsResponse.json();
+            const allJobs: JobDetailPanelType[] = allJobsResponse.offers;
             const postulesResponse = await fetch(`/api/postulation/${userId}`, {
                 method: "GET",
             });
-            const postules: PostuledJobs[] = await postulesResponse.json();
+            const postulesData = await postulesResponse.json();
+            const postules: PostuledJobs[] = postulesData.postulations;
             setPostuledData(postules);
-
-            // Filter jobs to only show those the user has postulated to
             const userPostedJobs = allJobs.filter(job =>
                 postules.some(postule => Number(postule.offerId) === job.id)
             );
-
             setPostedJobs(userPostedJobs);
+
         } catch (error) {
             console.error("Error cargando postulaciones:", error);
             toast.error("Error al cargar las postulaciones");
@@ -93,7 +94,6 @@ export default function PostuledPage() {
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4">
             <div className="max-w-6xl mx-auto">
-                {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">
                         Mis Postulaciones
@@ -102,8 +102,6 @@ export default function PostuledPage() {
                         Total de ofertas: <span className="font-semibold">{postedJobs.length}</span>
                     </p>
                 </div>
-
-                {/* Empty State */}
                 {postedJobs.length === 0 ? (
                     <Card className="text-center py-12">
                         <CardContent>
@@ -115,7 +113,7 @@ export default function PostuledPage() {
                                 Aún no te has postulado a ninguna oferta. ¡Explora las oportunidades disponibles!
                             </p>
                             <Button
-                                onClick={()=> router.push("/postulations")}
+                                onClick={() => router.push("/postulations")}
                             >Ver Ofertas Disponibles</Button>
                         </CardContent>
                     </Card>
@@ -124,7 +122,6 @@ export default function PostuledPage() {
                         {postedJobs.map((job) => {
                             const postulation = postuledData.find(p => p.offerId === job.id);
                             const postedDate = job.publicationDate ? new Date(job.publicationDate).toLocaleDateString('es-ES') : 'N/A';
-
                             return (
                                 <Card key={job.id} className="hover:shadow-lg transition-shadow">
                                     <CardHeader>
@@ -138,53 +135,36 @@ export default function PostuledPage() {
                                             </Badge>
                                         </div>
                                     </CardHeader>
-
-                                    <CardContent className="space-y-4">
-                                        {/* Descripción */}
+                                    <CardContent className="space-y-4 h-full">
                                         <p className="text-sm text-gray-600 line-clamp-3">
                                             {job.description}
                                         </p>
-
-                                        {/* Info Grid */}
                                         <div className="grid grid-cols-2 gap-3 text-sm">
-                                            {/* Ubicación */}
                                             <div className="flex items-center gap-2 text-gray-700">
                                                 <MapPin size={16} className="text-blue-600 shrink-0" />
                                                 <span className="truncate">{job.location}</span>
                                             </div>
-
-                                            {/* Salario */}
                                             <div className="flex items-center gap-2 text-gray-700">
                                                 <DollarSign size={16} className="text-green-600 shrink-0" />
                                                 <span className="truncate">${job.salary.toLocaleString()}</span>
                                             </div>
-
-                                            {/* Modalidad */}
                                             <div className="flex items-center gap-2 text-gray-700">
                                                 <Briefcase size={16} className="text-purple-600 shrink-0" />
                                                 <span className="truncate">{job.modality}</span>
                                             </div>
-
-                                            {/* Jornada */}
                                             <div className="flex items-center gap-2 text-gray-700">
                                                 <Clock size={16} className="text-orange-600 shrink-0" />
                                                 <span className="truncate">{job.journey}</span>
                                             </div>
                                         </div>
-
-                                        {/* Fecha */}
                                         <div className="flex items-center gap-2 text-sm text-gray-500 pt-2 border-t">
                                             <Calendar size={16} />
                                             <span>Publicado: {postedDate}</span>
                                         </div>
-
-                                        {/* Botones */}
-                                        <div className="flex gap-2 pt-4">
-                                            <Link href={`/postulations?jobId=${job.id}`} className="flex-1">
-                                                <Button variant="outline" className="w-full">
-                                                    Ver Detalles
-                                                </Button>
-                                            </Link>
+                                        <div className="flex gap-2 pt-4 justify-end">
+                                            <Button variant="outline" className="w-full">
+                                                Ver Detalles
+                                            </Button>
                                         </div>
                                     </CardContent>
                                 </Card>
