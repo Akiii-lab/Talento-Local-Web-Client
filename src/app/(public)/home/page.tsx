@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 export default function HomePage() {
     const [buisnessStats, setBuisnessStats] = useState<BuisnessMetrics>();
-
+    //Add commit for CI/CD pipeline test in main branch
     const fetchBuisnessMetrics = async () => {
         try {
             const response = await fetch('/api/metrics/buisness');
